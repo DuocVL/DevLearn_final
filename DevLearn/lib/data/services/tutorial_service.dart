@@ -11,7 +11,8 @@ class TutorialService {
     try {
       final response = await _apiClient.get('/tutorials');
       if (response.statusCode == 200) {
-        final List<dynamic> data = response.data;
+        // Sửa ở đây: Lấy danh sách từ khóa 'tutorials' trong map
+        final List<dynamic> data = response.data['tutorials']; 
         return data.map((json) => TutorialSummary.fromJson(json)).toList();
       }
       return [];
