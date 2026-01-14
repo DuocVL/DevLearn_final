@@ -21,7 +21,7 @@ class Tutorial {
 
   factory Tutorial.fromJson(Map<String, dynamic> json) {
     return Tutorial(
-      id: json['_id'],
+      id: json['id'], // Sửa ở đây: từ '_id' thành 'id'
       title: json['title'],
       description: json['description'],
       lessons: (json['lessons'] as List)

@@ -1,4 +1,5 @@
 import 'package:devlearn/data/models/tutorial_summary.dart';
+import 'package:devlearn/features/tutorial_detail/tutorial_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -19,9 +20,11 @@ class TutorialCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(12.0),
         onTap: () {
-          // TODO: Điều hướng đến màn hình chi tiết tutorial
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Sẽ mở chi tiết: ${tutorial.title}')),
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TutorialDetailScreen(tutorialSummary: tutorial),
+            ),
           );
         },
         child: Padding(
