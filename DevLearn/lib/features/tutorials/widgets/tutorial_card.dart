@@ -74,7 +74,9 @@ class TutorialCard extends StatelessWidget {
                         // TODO: Thêm ảnh đại diện của tác giả
                         backgroundColor: theme.colorScheme.primary,
                         child: Text(
-                          tutorial.author?.username.substring(0, 1).toUpperCase() ?? 'A',
+                          (tutorial.author?.username != null && tutorial.author!.username.isNotEmpty)
+                              ? tutorial.author!.username.substring(0, 1).toUpperCase()
+                              : 'A',
                           style: TextStyle(color: theme.colorScheme.onPrimary, fontWeight: FontWeight.bold),
                         ),
                       ),

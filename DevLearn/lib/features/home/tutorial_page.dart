@@ -1,6 +1,6 @@
 import 'package:devlearn/data/models/tutorial_summary.dart';
 import 'package:devlearn/data/services/tutorial_service.dart';
-import 'package:devlearn/widgets/tutorial_card.dart';
+import 'package:devlearn/features/tutorials/widgets/tutorial_card.dart';
 import 'package:flutter/material.dart';
 
 class TutorialPage extends StatefulWidget {
