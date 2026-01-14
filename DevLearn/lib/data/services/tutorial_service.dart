@@ -4,34 +4,34 @@ import 'package:devlearn/data/models/tutorial_summary.dart';
 import 'package:devlearn/main.dart';
 
 class TutorialService {
-  final ApiClient _apiClient = apiClient; // Sử dụng ApiClient toàn cục
+  final ApiClient _apiClient = apiClient;
 
-  // Lấy danh sách các bản tóm tắt hướng dẫn
   Future<List<TutorialSummary>> getTutorials() async {
     try {
       final response = await _apiClient.get('/tutorials');
-      if (response.statusCode == 200) {
-        // Sửa ở đây: Lấy danh sách từ khóa 'data' trong map
-        final List<dynamic> data = response.data['data']; 
-        return data.map((json) => TutorialSummary.fromJson(json)).toList();
+      if (response.statusCode == 200 && response.data['data'] != null) {
+        final List<dynamic> tutorialJson = response.data['data'];
+        return tutorialJson.map((json) => TutorialSummary.fromJson(json)).toList();
+      } else {
+        return [];
       }
-      return [];
     } catch (e) {
-      print(e);
-      return [];
+      print('Failed to load tutorials: $e');
+      throw Exception('Failed to load tutorials: $e');
     }
   }
 
-  // Lấy một hướng dẫn đầy đủ bằng ID
   Future<Tutorial> getTutorialById(String id) async {
     try {
       final response = await _apiClient.get('/tutorials/$id');
-      if (response.statusCode == 200) {
-        return Tutorial.fromJson(response.data);
+      if (response.statusCode == 200 && response.data['data'] != null) {
+        // Sửa ở đây: Lấy dữ liệu từ khóa 'data'
+        return Tutorial.fromJson(response.data['data']);
+      } else {
+        throw Exception('Không thể tải hướng dẫn');
       }
-      throw Exception('Không thể tải hướng dẫn');
     } catch (e) {
-      print(e);
+      print('Failed to load tutorial by id: $e');
       throw Exception('Không thể tải hướng dẫn');
     }
   }
