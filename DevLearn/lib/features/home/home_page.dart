@@ -2,8 +2,9 @@ import 'package:devlearn/features/home/widgets/welcome_card.dart';
 import 'package:flutter/material.dart';
 import 'package:devlearn/data/models/tutorial_summary.dart';
 import 'package:devlearn/data/repositories/tutorial_repository.dart';
-import 'package:devlearn/features/tutorials/tutorials_screen.dart';
-import 'package:devlearn/features/tutorials/widgets/tutorial_card.dart';
+import 'package:devlearn/features/tutorial/tutorials_screen.dart';
+import 'package:devlearn/features/tutorial/tutorial_detail_screen.dart';
+import 'package:devlearn/features/tutorial/widgets/tutorial_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

@@ -1,16 +1,17 @@
 import 'package:devlearn/features/forgot_password/forgot_password_screen.dart';
 import 'package:devlearn/features/forgot_password/reset_password_screen.dart';
 import 'package:devlearn/features/home/home_screen.dart';
-import 'package:devlearn/features/lesson_detail/lesson_detail_screen.dart';
+import 'package:devlearn/features/lesson/lesson_detail_screen.dart';
 import 'package:devlearn/features/login/login_screen.dart';
 import 'package:devlearn/features/post/create_post_screen.dart';
 import 'package:devlearn/features/register/register_screen.dart';
 import 'package:devlearn/features/splash/splash_screen.dart';
-import 'package:devlearn/features/tutorial_detail/tutorial_detail_screen.dart';
+import 'package:devlearn/features/tutorial/tutorial_detail_screen.dart';
 import 'package:flutter/material.dart';
 // SỬA LỖI: Thay đổi import sai
-import '../data/models/lesson.dart'; 
-import '../data/models/tutorial_summary.dart';
+import 'package:devlearn/data/models/lesson.dart'; 
+import 'package:devlearn/data/models/lesson_summary.dart'; 
+import 'package:devlearn/data/models/tutorial_summary.dart';
 import 'route_name.dart';
 
 // SỬA LỖI: Hợp nhất logic từ router.dart vào đây và sửa lỗi thiếu tham số

@@ -1,6 +1,6 @@
 import 'package:devlearn/data/models/tutorial_summary.dart';
 import 'package:devlearn/data/repositories/tutorial_repository.dart';
-import 'package:devlearn/features/tutorials/widgets/tutorial_card.dart';
+import 'package:devlearn/features/tutorial/widgets/tutorial_card.dart';
 import 'package:flutter/material.dart';
 
 class TutorialsScreen extends StatefulWidget {
