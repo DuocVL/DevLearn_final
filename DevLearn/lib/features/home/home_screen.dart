@@ -48,14 +48,6 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text(titles[_selectedIndex], style: const TextStyle(fontWeight: FontWeight.w600)),
         elevation: 1,
         actions: [
-          if (_selectedIndex == 0 || _selectedIndex == 2)
-            IconButton(
-              tooltip: 'Search',
-              icon: const Icon(Icons.search),
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Open search')));
-              },
-            ),
           Padding(
             padding: const EdgeInsets.only(right: 12.0),
             child: CircleAvatar(radius: 16, backgroundColor: Theme.of(context).colorScheme.primary, child: const Icon(Icons.person, size: 18, color: Colors.white)),
