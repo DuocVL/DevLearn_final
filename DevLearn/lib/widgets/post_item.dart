@@ -1,5 +1,6 @@
 import 'package:devlearn/data/models/post.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class PostItem extends StatefulWidget {
   final Post post;
@@ -29,158 +30,139 @@ class _PostItemState extends State<PostItem> {
         localLikeCount--;
       }
     });
+    // TODO: Call API to update like status
+  }
+
+  String _formatTimeAgo(DateTime dateTime) {
+    final difference = DateTime.now().difference(dateTime);
+    if (difference.inDays >= 7) {
+      final weeks = (difference.inDays / 7).floor();
+      return '$weeks tuần trước';
+    } else if (difference.inDays > 0) {
+      return '${difference.inDays} ngày trước';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours} giờ trước';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes} phút trước';
+    } else {
+      return 'Vừa xong';
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final isDarkMode = theme.brightness == Brightness.dark;
     final timeAgo = _formatTimeAgo(widget.post.createdAt);
+    final numberFormat = NumberFormat.compact();
 
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () {
-          // Navigator.push(context, MaterialPageRoute(builder: (context) => PostScreen(post: widget.post)));
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Author and Time ago
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 16,
-                    backgroundColor: colorScheme.primary.withOpacity(0.1),
-                    child: Text(
-                      widget.post.authorName?.isNotEmpty == true
-                          ? widget.post.authorName![0].toUpperCase()
-                          : 'A',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: colorScheme.primary),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.post.authorName ?? 'Anonymous',
-                        style: theme.textTheme.labelLarge,
-                      ),
-                      Text(
-                        timeAgo,
-                        style: theme.textTheme.bodySmall
-                            ?.copyWith(color: colorScheme.onSurface.withOpacity(0.6)),
-                      ),
-                    ],
-                  ),
-                ],
+    return InkWell(
+      onTap: () {
+        // TODO: Navigate to Post Detail Screen
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+        color: theme.scaffoldBackgroundColor, 
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeader(theme, timeAgo),
+            const SizedBox(height: 12),
+            Text(
+              widget.post.content,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                fontSize: 15,
+                color: isDarkMode ? Colors.grey.shade300 : Colors.black87,
+                height: 1.4,
               ),
-              const SizedBox(height: 12),
-
-              // Title and Content
-              Text(
-                widget.post.title,
-                style: theme.textTheme.titleMedium
-                    ?.copyWith(fontWeight: FontWeight.bold),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                widget.post.content,
-                style: theme.textTheme.bodyMedium
-                    ?.copyWith(color: colorScheme.onSurface.withOpacity(0.8)),
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 12),
-
-              // Tags
-              if (widget.post.tags?.isNotEmpty == true)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 12.0),
-                  child: Wrap(
-                    spacing: 6.0,
-                    runSpacing: 4.0,
-                    children: widget.post.tags!
-                        .map((tag) => Chip(
-                              label: Text(tag),
-                              padding: EdgeInsets.zero,
-                              labelStyle: theme.chipTheme.labelStyle?.copyWith(fontSize: 10),
-                              backgroundColor: theme.chipTheme.backgroundColor,
-                              side: BorderSide.none,
-                            ))
-                        .toList(),
-                  ),
-                ),
-              
-              const Divider(),
-              
-              // Stats and Like button
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      _iconStat(theme, Icons.thumb_up_alt_outlined, localLikeCount),
-                      const SizedBox(width: 20),
-                      _iconStat(theme, Icons.comment_outlined, widget.post.commentCount),
-                      const SizedBox(width: 20),
-                      _iconStat(theme, Icons.remove_red_eye_outlined, widget.post.views),
-                    ],
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      isLiked ? Icons.favorite : Icons.favorite_border,
-                      color: isLiked ? Colors.redAccent : colorScheme.onSurface.withOpacity(0.6),
-                    ),
-                    onPressed: _toggleLike,
-                  )
-                ],
-              ),
-            ],
-          ),
+              maxLines: 10, 
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 12),
+            _buildFooter(theme, numberFormat),
+          ],
         ),
       ),
     );
   }
 
-  Widget _iconStat(ThemeData theme, IconData icon, int count) {
+  Widget _buildHeader(ThemeData theme, String timeAgo) {
     return Row(
       children: [
-        Icon(icon,
-            color: theme.colorScheme.onSurface.withOpacity(0.6), size: 16),
-        const SizedBox(width: 6),
-        Text(
-          '$count',
-          style: theme.textTheme.bodyMedium
-              ?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.8)),
+        CircleAvatar(
+          radius: 22,
+          backgroundColor: theme.primaryColor.withOpacity(0.1),
+          child: Text(
+            widget.post.authorName?.isNotEmpty == true ? widget.post.authorName![0].toUpperCase() : 'A',
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: theme.primaryColor, fontSize: 18),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(widget.post.authorName ?? 'Anonymous', style: const TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 2),
+              Text(timeAgo, style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey.shade600)),
+            ],
+          ),
+        ),
+        IconButton(
+          onPressed: () { /* TODO: Show more options */ },
+          icon: Icon(Icons.more_horiz_rounded, color: Colors.grey.shade600),
         ),
       ],
     );
   }
 
-  String _formatTimeAgo(DateTime dateTime) {
-    final difference = DateTime.now().difference(dateTime);
-    if (difference.inDays > 365) {
-      return '${(difference.inDays / 365).floor()}y ago';
-    } else if (difference.inDays > 30) {
-      return '${(difference.inDays / 30).floor()}mo ago';
-    } else if (difference.inDays > 0) {
-      return '${difference.inDays}d ago';
-    } else if (difference.inHours > 0) {
-      return '${difference.inHours}h ago';
-    } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}m ago';
-    } else {
-      return 'Just now';
-    }
+  Widget _buildFooter(ThemeData theme, NumberFormat numberFormat) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        _buildActionButton(
+          theme: theme,
+          icon: isLiked ? Icons.favorite : Icons.favorite_border,
+          text: numberFormat.format(localLikeCount),
+          color: isLiked ? Colors.pink : Colors.grey.shade600,
+          onTap: _toggleLike,
+        ),
+        const SizedBox(width: 24),
+        _buildActionButton(
+          theme: theme,
+          icon: Icons.chat_bubble_outline_rounded,
+          text: numberFormat.format(widget.post.commentCount),
+          color: Colors.grey.shade600,
+          onTap: () { /* TODO: Open comments */ },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionButton({
+    required ThemeData theme,
+    required IconData icon,
+    required String text,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+        child: Row(
+          children: [
+            Icon(icon, color: color, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              text,
+              style: TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 14),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
-

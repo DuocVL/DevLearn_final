@@ -1,6 +1,5 @@
 import 'package:devlearn/data/models/post.dart';
 import 'package:devlearn/data/repositories/post_repository.dart';
-import 'package:devlearn/routes/route_name.dart';
 import 'package:devlearn/widgets/post_item.dart';
 import 'package:flutter/material.dart';
 
@@ -33,7 +32,14 @@ class _PostPageState extends State<PostPage> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Bảng tin', style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: false,
+        elevation: 0,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      ),
+      body: RefreshIndicator(
         onRefresh: _refresh,
         child: FutureBuilder<List<Post>>(
           future: _postsFuture,
@@ -43,59 +49,65 @@ class _PostPageState extends State<PostPage> {
             }
 
             if (snapshot.hasError) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.error_outline, color: Colors.red, size: 48),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Lỗi tải bài viết',
-                        style: Theme.of(context).textTheme.titleLarge,
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        snapshot.error.toString(),
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton.icon(
-                        onPressed: _refresh,
-                        icon: const Icon(Icons.refresh),
-                        label: const Text('Thử lại'),
-                      ),
-                    ],
-                  ),
-                ),
-              );
+              return _buildErrorState();
             }
 
             if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.article_outlined, size: 56, color: Colors.grey),
-                    const SizedBox(height: 12),
-                    Text('Chưa có bài viết nào', style: Theme.of(context).textTheme.titleMedium),
-                  ],
-                ),
-              );
+              return _buildEmptyState();
             }
 
             final posts = snapshot.data!;
-            return ListView.builder(
-              padding: const EdgeInsets.only(bottom: 80), // Padding for FAB
+            return ListView.separated(
+              padding: const EdgeInsets.only(bottom: 80, top: 8), // Padding for FAB and top spacing
               itemCount: posts.length,
+              separatorBuilder: (context, index) => Divider(height: 1, thickness: 1, color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade800 : Colors.grey.shade200),
               itemBuilder: (context, index) {
                 return PostItem(post: posts[index]);
               },
             );
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.forum_outlined, size: 64, color: Colors.grey),
+          const SizedBox(height: 16),
+          const Text('Chưa có bài viết nào', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+          const SizedBox(height: 8),
+          Text('Hãy là người đầu tiên tạo một bài viết!', style: TextStyle(color: Colors.grey.shade600)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorState() {
+     return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.cloud_off_outlined, size: 64, color: Colors.grey.shade400),
+              const SizedBox(height: 16),
+              const Text('Không thể tải dữ liệu', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 8),
+              Text('Đã có lỗi xảy ra. Vui lòng kiểm tra kết nối và thử lại.', 
+                  style: TextStyle(color: Colors.grey.shade600), 
+                  textAlign: TextAlign.center),
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: _refresh,
+                icon: const Icon(Icons.refresh),
+                label: const Text('Thử lại'),
+              ),
+            ],
+          ),
         ),
       );
   }

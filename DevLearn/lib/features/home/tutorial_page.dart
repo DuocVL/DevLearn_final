@@ -23,27 +23,37 @@ class _TutorialPageState extends State<TutorialPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<TutorialSummary>>(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Hướng dẫn', style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: false,
+        elevation: 0,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      ),
+      body: FutureBuilder<List<TutorialSummary>>(
         future: _tutorialsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(child: Text('Đã xảy ra lỗi: ${snapshot.error}'));
           }
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No tutorials found.'));
+            return const Center(child: Text('Chưa có bài hướng dẫn nào.'));
           }
 
           final tutorials = snapshot.data!;
-          return ListView.builder(
+          return ListView.separated(
+            padding: const EdgeInsets.all(16.0),
             itemCount: tutorials.length,
+            separatorBuilder: (context, index) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
               return TutorialCard(tutorial: tutorials[index]);
             },
           );
         },
-      );
+      ),
+    );
   }
 }
