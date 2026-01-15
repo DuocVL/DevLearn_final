@@ -1,16 +1,14 @@
 import 'package:devlearn/data/models/submission.dart';
 import 'package:devlearn/data/repositories/submission_repository.dart';
+import 'package:devlearn/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-// SỬA: Key được truyền vào từ bên ngoài
 class SubmissionHistoryTab extends StatefulWidget {
   final String problemId;
-  const SubmissionHistoryTab({required Key key, required this.problemId})
-      : super(key: key);
+  const SubmissionHistoryTab({super.key, required this.problemId});
 
   @override
-  // SỬA: State class được đặt tên công khai để có thể truy cập từ key
   SubmissionHistoryTabState createState() => SubmissionHistoryTabState();
 }
 
@@ -25,7 +23,6 @@ class SubmissionHistoryTabState extends State<SubmissionHistoryTab> {
     refresh(); // Tải dữ liệu lần đầu
   }
 
-  // THÊM: Phương thức public để tải lại dữ liệu từ bên ngoài
   void refresh() {
     setState(() {
       _submissionsFuture = 
@@ -112,8 +109,10 @@ class SubmissionHistoryTabState extends State<SubmissionHistoryTab> {
         'Nộp ${timeago.format(submission.createdAt, locale: 'vi')}',
       ),
       onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Chức năng xem chi tiết đang được phát triển!')),
+        Navigator.pushNamed(
+          context,
+          RouteName.submissionDetail,
+          arguments: submission.id,
         );
       },
     );

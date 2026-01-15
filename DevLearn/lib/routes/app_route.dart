@@ -4,30 +4,27 @@ import 'package:devlearn/features/home/home_screen.dart';
 import 'package:devlearn/features/lesson/lesson_detail_screen.dart';
 import 'package:devlearn/features/login/login_screen.dart';
 import 'package:devlearn/features/post/create_post_screen.dart';
+import 'package:devlearn/features/problems/problem_screen.dart';
+import 'package:devlearn/features/problems/ui/screens/submission_detail_screen.dart';
 import 'package:devlearn/features/register/register_screen.dart';
 import 'package:devlearn/features/splash/splash_screen.dart';
 import 'package:devlearn/features/tutorial/tutorial_detail_screen.dart';
 import 'package:flutter/material.dart';
-// SỬA LỖI: Thay đổi import sai
-import 'package:devlearn/data/models/lesson.dart'; 
 import 'package:devlearn/data/models/lesson_summary.dart'; 
+import 'package:devlearn/data/models/problem.dart';
 import 'package:devlearn/data/models/tutorial_summary.dart';
 import 'route_name.dart';
 
-// SỬA LỖI: Hợp nhất logic từ router.dart vào đây và sửa lỗi thiếu tham số
 class AppRoute {
   static Route<dynamic> onGenerateRoute(
     RouteSettings settings,
-    // Thêm các callback cần thiết
     {required VoidCallback onLoginSuccess, 
      required VoidCallback onLogout}
   ) {
     switch (settings.name) {
       case RouteName.home:
-        // Cung cấp callback cho HomeScreen
         return MaterialPageRoute(builder: (_) => HomeScreen(onLogout: onLogout));
       case RouteName.login:
-        // Cung cấp callback cho LoginScreen
         return MaterialPageRoute(builder: (_) => LoginScreen(onLoginSuccess: onLoginSuccess));
       case RouteName.splash:
         return MaterialPageRoute(builder: (_) => const SplashScreen());
@@ -44,9 +41,14 @@ class AppRoute {
         final tutorialSummary = settings.arguments as TutorialSummary;
         return MaterialPageRoute(builder: (_) => TutorialDetailScreen(tutorialSummary: tutorialSummary));
       case RouteName.lessonDetail:
-        // Giờ đây `as LessonSummary` sẽ tham chiếu đến đúng lớp được import
         final lessonSummary = settings.arguments as LessonSummary;
         return MaterialPageRoute(builder: (_) => LessonDetailScreen(lessonSummary: lessonSummary));
+      case RouteName.problemDetail:
+        final problemId = settings.arguments as String;
+        return MaterialPageRoute(builder: (_) => ProblemScreen(problemId: problemId));
+      case RouteName.submissionDetail:
+        final submissionId = settings.arguments as String;
+        return MaterialPageRoute(builder: (_) => SubmissionDetailScreen(submissionId: submissionId));
       default:
         return MaterialPageRoute(builder: (_) => const Scaffold(body: Center(child: Text('Page not found'))));
     }

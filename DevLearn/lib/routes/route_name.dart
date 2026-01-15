@@ -8,4 +8,7 @@ class RouteName {
   static const String lessonDetail = '/lesson-detail';
   static const String createPost = '/create-post';
   static const String splash = '/splash';
+  static const String problemDetail = '/problem-detail'; // Thêm route cho chi tiết bài tập
+  static const String submissionDetail = '/submission-detail'; // Thêm route cho chi tiết bài nộp
+
 }
