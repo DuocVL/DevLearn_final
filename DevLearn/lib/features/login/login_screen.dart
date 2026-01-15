@@ -20,8 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscureText = true;
 
   Future<void> _login() async {
-    // Ẩn bàn phím khi nhấn nút
-    FocusScope.of(context).unfocus(); 
+    FocusScope.of(context).unfocus();
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
       final success = await _authRepo.login(
@@ -48,6 +47,8 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = theme.primaryColor;
+    final vibrantColor = Colors.cyan.shade300; // Màu nổi bật cho dark mode
 
     return Scaffold(
       body: SafeArea(
@@ -62,8 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // 1. Logo và Tiêu đề
-                    Icon(Icons.code_rounded, size: 80, color: theme.primaryColor),
+                    Icon(Icons.code_rounded, size: 80, color: isDarkMode ? vibrantColor : primaryColor),
                     const SizedBox(height: 16),
                     Text(
                       'Chào mừng trở lại!',
@@ -74,20 +74,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     Text(
                       'Đăng nhập để tiếp tục hành trình của bạn',
                       textAlign: TextAlign.center,
-                      style: theme.textTheme.titleMedium?.copyWith(color: Colors.grey.shade600),
+                      style: theme.textTheme.titleMedium?.copyWith(color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600),
                     ),
                     const SizedBox(height: 48),
 
-                    // 2. Form đăng nhập
                     TextFormField(
                       controller: _emailController,
                       decoration: InputDecoration(
                         hintText: 'Email',
                         prefixIcon: const Icon(Icons.email_outlined),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                         filled: true,
                         fillColor: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
                       ),
@@ -111,10 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           icon: Icon(_obscureText ? Icons.visibility_off_outlined : Icons.visibility_outlined),
                           onPressed: () => setState(() => _obscureText = !_obscureText),
                         ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                         filled: true,
                         fillColor: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
                       ),
@@ -131,46 +124,40 @@ class _LoginScreenState extends State<LoginScreen> {
                       alignment: Alignment.centerRight,
                       child: TextButton(
                         onPressed: () => Navigator.of(context).pushNamed(RouteName.forgotPassword),
-                        child: const Text('Quên mật khẩu?'),
+                        child: Text('Quên mật khẩu?', style: TextStyle(color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600)),
                       ),
                     ),
                     const SizedBox(height: 24),
 
-                    // 3. Nút đăng nhập
                     _isLoading
                         ? const Center(child: CircularProgressIndicator())
                         : ElevatedButton(
                             onPressed: _login,
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                               elevation: 2,
+                              backgroundColor: isDarkMode ? vibrantColor : primaryColor,
+                              foregroundColor: isDarkMode ? Colors.black : Colors.white,
                             ),
-                            child: const Text(
-                              'Đăng nhập',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                            ),
+                            child: const Text('Đăng nhập', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                           ),
                     const SizedBox(height: 32),
 
-                    // 4. Điều hướng sang Đăng ký
                     Center(
                       child: RichText(
                         textAlign: TextAlign.center,
                         text: TextSpan(
                           text: 'Chưa có tài khoản? ',
-                          style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey.shade700),
+                          style: theme.textTheme.bodyMedium?.copyWith(color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade700),
                           children: [
                             TextSpan(
                               text: 'Đăng ký ngay',
                               style: TextStyle(
-                                color: theme.primaryColor,
+                                color: isDarkMode ? vibrantColor : primaryColor,
                                 fontWeight: FontWeight.bold,
                               ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () => Navigator.of(context).pushNamed(RouteName.register),
+                              recognizer: TapGestureRecognizer()..onTap = () => Navigator.of(context).pushNamed(RouteName.register),
                             ),
                           ],
                         ),

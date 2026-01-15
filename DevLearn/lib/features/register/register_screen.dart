@@ -54,6 +54,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = theme.primaryColor;
+    final vibrantColor = Colors.cyan.shade300; // Màu nổi bật cho dark mode
 
     return Scaffold(
       body: SafeArea(
@@ -77,7 +79,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Text(
                       'Bắt đầu hành trình học lập trình của bạn ngay hôm nay!',
                       textAlign: TextAlign.center,
-                      style: theme.textTheme.titleMedium?.copyWith(color: Colors.grey.shade600),
+                      style: theme.textTheme.titleMedium?.copyWith(color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600),
                     ),
                     const SizedBox(height: 48),
 
@@ -86,10 +88,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       decoration: InputDecoration(
                         hintText: 'Tên người dùng',
                         prefixIcon: const Icon(Icons.person_outline),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                         filled: true,
                         fillColor: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
                       ),
@@ -107,10 +106,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       decoration: InputDecoration(
                         hintText: 'Email',
                         prefixIcon: const Icon(Icons.email_outlined),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                         filled: true,
                         fillColor: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
                       ),
@@ -134,10 +130,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           icon: Icon(_obscureText ? Icons.visibility_off_outlined : Icons.visibility_outlined),
                           onPressed: () => setState(() => _obscureText = !_obscureText),
                         ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                         filled: true,
                         fillColor: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
                       ),
@@ -156,15 +149,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             onPressed: _register,
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                               elevation: 2,
+                              backgroundColor: isDarkMode ? vibrantColor : primaryColor,
+                              foregroundColor: isDarkMode ? Colors.black : Colors.white,
                             ),
-                            child: const Text(
-                              'Tạo tài khoản',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                            ),
+                            child: const Text('Tạo tài khoản', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                           ),
                     const SizedBox(height: 32),
 
@@ -173,16 +163,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         textAlign: TextAlign.center,
                         text: TextSpan(
                           text: 'Đã có tài khoản? ',
-                          style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey.shade700),
+                          style: theme.textTheme.bodyMedium?.copyWith(color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade700),
                           children: [
                             TextSpan(
                               text: 'Đăng nhập',
                               style: TextStyle(
-                                color: theme.primaryColor,
+                                color: isDarkMode ? vibrantColor : primaryColor,
                                 fontWeight: FontWeight.bold,
                               ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () => Navigator.of(context).pop(),
+                              recognizer: TapGestureRecognizer()..onTap = () => Navigator.of(context).pop(),
                             ),
                           ],
                         ),
