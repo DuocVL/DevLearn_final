@@ -69,7 +69,9 @@ class _SubmissionDetailScreenState extends State<SubmissionDetailScreen> {
           children: [
             _buildInfoRow('Status', submission.status, color: _getStatusColor(submission.status)),
             _buildInfoRow('Language', submission.language),
-            _buildInfoRow('Test Cases', '${submission.result.passedCount}/${submission.result.totalCount} passed'),
+            // SỬA: Xử lý `result` có thể là null
+            if (submission.result != null)
+              _buildInfoRow('Test Cases', '${submission.result!.passedCount}/${submission.result!.totalCount} passed'),
             _buildInfoRow('Runtime', '${submission.runtime} ms'),
             _buildInfoRow('Memory', '${(submission.memory / 1024).toStringAsFixed(2)} MB'),
             _buildInfoRow('Submitted At', DateFormat.yMd().add_jm().format(submission.createdAt)),
@@ -78,6 +80,7 @@ class _SubmissionDetailScreenState extends State<SubmissionDetailScreen> {
       ),
     );
   }
+
 
   Widget _buildInfoRow(String label, String value, {Color? color}) {
     return Padding(
