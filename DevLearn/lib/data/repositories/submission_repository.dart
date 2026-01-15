@@ -12,8 +12,7 @@ class SubmissionRepository {
         '/submissions',
         queryParameters: {'problemId': problemId},
       );
-      
-      // SỬA: Dữ liệu nằm trong key 'submissions' theo code backend mới
+
       if (response.statusCode == 200 && response.data['submissions'] != null) {
         final List<dynamic> submissionsJson = response.data['submissions'];
         return submissionsJson.map((json) => Submission.fromJson(json)).toList();
@@ -25,7 +24,7 @@ class SubmissionRepository {
     }
   }
 
-  // THÊM: Tạo một lần nộp bài mới
+  // Tạo một lần nộp bài mới
   Future<String> createSubmission({required String problemId, required String language, required String code}) async {
     try {
       final response = await _apiClient.post(
@@ -44,8 +43,23 @@ class SubmissionRepository {
       }
     } catch (e) {
       print('Failed to create submission: $e');
-      // Ném lỗi để UI có thể bắt và hiển thị thông báo
       throw Exception('Failed to create submission: $e');
+    }
+  }
+
+  // LẤY CHI TIẾT MỘT BÀI NỘP
+  Future<Submission> getSubmissionById(String submissionId) async {
+    try {
+      final response = await _apiClient.get('/submissions/$submissionId');
+
+      if (response.statusCode == 200 && response.data['submission'] != null) {
+        return Submission.fromJson(response.data['submission']);
+      }
+
+      throw Exception('Failed to load submission details. Status code: ${response.statusCode}');
+    } catch (e) {
+      print(e);
+      throw Exception('Failed to load submission details: $e');
     }
   }
 }
