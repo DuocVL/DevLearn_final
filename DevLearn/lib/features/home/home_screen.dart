@@ -5,9 +5,9 @@ import 'package:devlearn/features/home/problem_page.dart';
 import 'package:devlearn/features/home/profile_page.dart';
 import 'package:devlearn/features/home/tutorial_page.dart';
 import 'package:flutter/material.dart';
+import 'package:devlearn/routes/route_name.dart'; // THÊM IMPORT
 
 class HomeScreen extends StatefulWidget {
-  // SỬA: Thêm callback để xử lý đăng xuất
   final VoidCallback onLogout;
 
   const HomeScreen({super.key, required this.onLogout});
@@ -19,20 +19,17 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
-  // SỬA: _pages không thể là const nữa vì ProfilePage cần tham số
   late final List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
-    // Khởi tạo danh sách các trang ở đây
     _pages = [
       const HomePage(),
       const TutorialPage(),
       const ProblemPage(),
       const PostPage(),
-      // Truyền callback onLogout vào ProfilePage
-      ProfilePage(onLogout: widget.onLogout), 
+      ProfilePage(onLogout: widget.onLogout),
     ];
   }
 
@@ -69,7 +66,8 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: _selectedIndex == 3
           ? FloatingActionButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/create_post');
+                // SỬA: Sử dụng hằng số RouteName thay vì chuỗi cứng
+                Navigator.pushNamed(context, RouteName.createPost);
               },
               child: const Icon(Icons.add),
             )
