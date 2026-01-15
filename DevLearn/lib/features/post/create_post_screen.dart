@@ -11,133 +11,167 @@ class CreatePostScreen extends StatefulWidget {
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
-  final _tagsController = TextEditingController();
   final _contentController = TextEditingController();
-  final _repo = PostRepository();
-  bool _anonymous = false;
-  bool _submitting = false;
+  final _tagsController = TextEditingController();
+
+  bool _isAnonymous = false;
+  String _status = 'published'; // Giá trị mặc định
+  bool _isLoading = false;
+
+  final _postRepository = PostRepository();
 
   @override
   void dispose() {
     _titleController.dispose();
-    _tagsController.dispose();
     _contentController.dispose();
+    _tagsController.dispose();
     super.dispose();
   }
 
-  Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-    
-    final tags = _tagsController.text
-        .split(',')
-        .map((e) => e.trim())
-        .where((e) => e.isNotEmpty)
-        .toList();
+  Future<void> _submitPost() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isLoading = true);
 
-    setState(() => _submitting = true);
+      try {
+        // Chuyển đổi chuỗi tags thành danh sách
+        final tags = _tagsController.text.split(',').map((t) => t.trim()).where((t) => t.isNotEmpty).toList();
 
-    try {
-      await _repo.addPost(
-        _titleController.text.trim(),
-        _contentController.text.trim(),
-        tags,
-        _anonymous,
-      );
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Đã tạo bài viết thành công!'),
-            backgroundColor: Colors.green,
-          ),
+        await _postRepository.createPost(
+          title: _titleController.text,
+          content: _contentController.text,
+          tags: tags,
+          isAnonymous: _isAnonymous,
+          status: _status,
         );
-        Navigator.of(context).pop(true);
-      }
-    } catch (e) {
-      if (mounted) {
+
+        // Hiển thị thông báo thành công và quay lại màn hình trước
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Lỗi: ${e.toString().replaceFirst("Exception: ", "")}'),
-            backgroundColor: Colors.red,
-          ),
+          const SnackBar(content: Text('Đăng bài viết thành công!'), backgroundColor: Colors.green),
         );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _submitting = false);
+        Navigator.of(context).pop();
+      } catch (e) {
+        // Hiển thị lỗi
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Lỗi: ${e.toString()}'), backgroundColor: Colors.red),
+        );
+      } finally {
+        setState(() => _isLoading = false);
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tạo bài viết'),
+        title: const Text('Tạo bài viết mới'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator(color: Colors.white))
+                : TextButton(
+                    onPressed: _submitPost,
+                    child: const Text('ĐĂNG', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Trường nhập tiêu đề
               TextFormField(
                 controller: _titleController,
                 decoration: const InputDecoration(
                   labelText: 'Tiêu đề',
-                  hintText: 'Nhập tiêu đề bài viết',
+                  hintText: 'Nhập tiêu đề bài viết của bạn',
+                  border: OutlineInputBorder(),
                 ),
-                validator: (value) =>
-                    (value == null || value.trim().isEmpty) ? 'Tiêu đề không được để trống' : null,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Vui lòng nhập tiêu đề';
+                  }
+                  return null;
+                },
+                style: Theme.of(context).textTheme.titleLarge,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
+
+              // Trường nhập nội dung
+              TextFormField(
+                controller: _contentController,
+                decoration: const InputDecoration(
+                  labelText: 'Nội dung',
+                  hintText: 'Chia sẻ kiến thức của bạn...',
+                  border: OutlineInputBorder(),
+                  alignLabelWithHint: true,
+                ),
+                maxLines: 15,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Vui lòng nhập nội dung';
+                  }
+                  return null;
+                },
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.5),
+              ),
+              const SizedBox(height: 24),
+
+              // Trường nhập tags
               TextFormField(
                 controller: _tagsController,
                 decoration: const InputDecoration(
-                  labelText: 'Tags',
-                  hintText: 'Phân tách các tags bằng dấu phẩy ( , )',
+                  labelText: 'Tags (thẻ)',
+                  hintText: 'ví dụ: flutter, api, javascript',
+                  helperText: 'Các tags cách nhau bởi dấu phẩy',
+                  border: OutlineInputBorder(),
                 ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _contentController,
-                minLines: 8,
-                maxLines: null,
-                decoration: const InputDecoration(
-                  labelText: 'Nội dung',
-                  hintText: 'Nhập nội dung bài viết của bạn...',
-                  alignLabelWithHint: true,
-                ),
-                validator: (value) =>
-                    (value == null || value.trim().isEmpty) ? 'Nội dung không được để trống' : null,
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Switch(
-                    value: _anonymous,
-                    onChanged: (value) => setState(() => _anonymous = value),
-                  ),
-                  const SizedBox(width: 8),
-                  const Text('Đăng với tư cách ẩn danh'),
-                ],
               ),
               const SizedBox(height: 24),
-              ElevatedButton.icon(
-                onPressed: _submitting ? null : _submit,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                icon: _submitting
-                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                    : const Icon(Icons.send),
-                label: Text(_submitting ? 'Đang gửi...' : 'Đăng bài'),
-              )
+
+              // Lựa chọn ẩn danh
+              SwitchListTile(
+                title: const Text('Đăng với tư cách ẩn danh'),
+                value: _isAnonymous,
+                onChanged: (bool value) {
+                  setState(() {
+                    _isAnonymous = value;
+                  });
+                },
+                secondary: Icon(_isAnonymous ? Icons.visibility_off : Icons.visibility),
+              ),
+              const Divider(height: 32),
+
+              // Lựa chọn trạng thái (Nháp hoặc Công khai)
+              Text('Trạng thái', style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 8),
+              RadioListTile<String>(
+                title: const Text('Công khai'),
+                subtitle: const Text('Mọi người đều có thể thấy bài viết này'),
+                value: 'published',
+                groupValue: _status,
+                onChanged: (String? value) {
+                  setState(() {
+                    _status = value!;
+                  });
+                },
+              ),
+              RadioListTile<String>(
+                title: const Text('Lưu nháp'),
+                subtitle: const Text('Chỉ mình bạn có thể thấy bài viết này'),
+                value: 'draft',
+                groupValue: _status,
+                onChanged: (String? value) {
+                  setState(() {
+                    _status = value!;
+                  });
+                },
+              ),
             ],
           ),
         ),
