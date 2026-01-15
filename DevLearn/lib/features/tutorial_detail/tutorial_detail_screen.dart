@@ -1,6 +1,6 @@
 import 'package:devlearn/data/models/tutorial.dart';
 import 'package:devlearn/data/models/tutorial_summary.dart';
-import 'package:devlearn/data/services/tutorial_service.dart';
+import 'package:devlearn/data/repositories/tutorial_repository.dart';
 import 'package:devlearn/features/lesson_detail/lesson_detail_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -14,12 +14,14 @@ class TutorialDetailScreen extends StatefulWidget {
 
 class _TutorialDetailScreenState extends State<TutorialDetailScreen> {
   late Future<Tutorial> _tutorialFuture;
-  final _tutorialService = TutorialService();
+  // SỬA: Sử dụng TutorialRepository thay vì TutorialService
+  final _tutorialRepository = TutorialRepository();
 
   @override
   void initState() {
     super.initState();
-    _tutorialFuture = _tutorialService.getTutorialById(widget.tutorialSummary.id);
+    // SỬA: Gọi phương thức từ repository
+    _tutorialFuture = _tutorialRepository.getTutorialById(widget.tutorialSummary.id);
   }
 
   @override

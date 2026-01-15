@@ -22,12 +22,16 @@ class _HomePageState extends State<HomePage> {
     _tutorialsFuture = _fetchHomepageTutorials();
   }
 
+  // SỬA: Hàm này giờ trả về Future<List<TutorialSummary>> trực tiếp
   Future<List<TutorialSummary>> _fetchHomepageTutorials() async {
     try {
-      final response = await _tutorialRepository.getTutorials(limit: 4);
-      return response['tutorials'] as List<TutorialSummary>;
+      // SỬA: Gọi repository và nhận về List<TutorialSummary>
+      // Không cần xử lý JSON ở đây nữa
+      final tutorials = await _tutorialRepository.getTutorials(limit: 4);
+      return tutorials;
     } catch (e) {
       print('Error fetching homepage tutorials: $e');
+      // Trả về danh sách rỗng nếu có lỗi
       return [];
     }
   }
@@ -100,7 +104,6 @@ class _HomePageState extends State<HomePage> {
                 itemBuilder: (context, index) {
                   return Container(
                     width: MediaQuery.of(context).size.width * 0.8,
-                    // SỬA: Bỏ const vì giá trị right phụ thuộc vào biến index
                     margin: EdgeInsets.only(left: 16, right: index == tutorials.length - 1 ? 16 : 0),
                     child: TutorialCard(tutorial: tutorials[index]),
                   );

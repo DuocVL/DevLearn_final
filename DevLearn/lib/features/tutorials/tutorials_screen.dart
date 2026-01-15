@@ -11,46 +11,31 @@ class TutorialsScreen extends StatefulWidget {
 }
 
 class _TutorialsScreenState extends State<TutorialsScreen> {
-  // Repository để lấy dữ liệu
   final TutorialRepository _repository = TutorialRepository();
-  // Scroll controller để phát hiện cuộn xuống cuối
   final ScrollController _scrollController = ScrollController();
 
-  // Danh sách chứa các tutorial
   final List<TutorialSummary> _tutorials = [];
-  // Trang hiện tại để phân trang
   int _currentPage = 1;
-  // Cờ báo hiệu có còn dữ liệu để tải thêm không
   bool _hasMore = true;
-  // Cờ báo hiệu đang tải dữ liệu
   bool _isLoading = false;
-  // Cờ báo hiệu có lỗi xảy ra không
   bool _hasError = false;
 
   @override
   void initState() {
     super.initState();
-    // Tải dữ liệu lần đầu tiên
     _fetchTutorials();
-    // Thêm listener cho scroll controller
     _scrollController.addListener(_onScroll);
   }
 
-  // Hàm được gọi khi người dùng cuộn
   void _onScroll() {
-    // Nếu không còn dữ liệu, hoặc đang tải, thì không làm gì cả
     if (!_hasMore || _isLoading) return;
-
-    // Khi người dùng cuộn gần đến cuối danh sách
     if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent * 0.9) {
-      // Tải thêm dữ liệu
       _fetchTutorials();
     }
   }
 
-  // Hàm tải dữ liệu từ repository
+  // SỬA: Toàn bộ hàm fetch được làm lại để đơn giản và đúng đắn hơn
   Future<void> _fetchTutorials({bool isRefresh = false}) async {
-    // Nếu đang tải thì không gọi lại
     if (_isLoading) return;
 
     setState(() {
@@ -61,43 +46,31 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
     });
 
     try {
-      // Nếu là refresh thì reset lại danh sách và trang hiện tại
       if (isRefresh) {
         _currentPage = 1;
         _tutorials.clear();
         _hasMore = true;
       }
 
-      // FIX: Correctly handle the Map returned from the repository
-      // 1. Fetch the data which is a Map
-      final response = await _repository.getTutorials(page: _currentPage);
-
-      // 2. Extract the list of JSON objects from the 'data' key
-      final tutorialsJson = response['data'] as List<dynamic>? ?? [];
-
-      // 3. Convert the JSON list to a List<TutorialSummary>
-      final List<TutorialSummary> newTutorials = tutorialsJson
-          .map((json) => TutorialSummary.fromJson(json as Map<String, dynamic>))
-          .toList();
+      // 1. Lấy danh sách các tutorial đã được parse từ repository
+      final List<TutorialSummary> newTutorials = await _repository.getTutorials(page: _currentPage);
 
       setState(() {
-        // If the new list is empty, it means we've reached the end
+        // 2. Nếu danh sách trả về rỗng, tức là đã hết dữ liệu
         if (newTutorials.isEmpty) {
           _hasMore = false;
         } else {
-          // 4. Add the new list of tutorials to our main list
+        // 3. Thêm các tutorial mới vào danh sách hiện tại và tăng số trang
           _tutorials.addAll(newTutorials);
           _currentPage++;
         }
       });
     } catch (e) {
-      // Handle error
       setState(() {
         _hasError = true;
       });
       print('Error fetching tutorials: $e');
     } finally {
-      // Mark as not loading
       if (mounted) {
         setState(() {
           _isLoading = false;

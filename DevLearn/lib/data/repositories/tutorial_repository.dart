@@ -1,34 +1,23 @@
-import 'package:devlearn/data/api_client.dart';
+import 'package:devlearn/data/models/lesson.dart';
+import 'package:devlearn/data/models/tutorial.dart';
 import 'package:devlearn/data/models/tutorial_summary.dart';
-import 'package:devlearn/main.dart';
+import 'package:devlearn/data/services/tutorial_service.dart';
 
 class TutorialRepository {
-  final ApiClient _apiClient = apiClient;
+  final TutorialService _service = TutorialService();
 
-  Future<Map<String, dynamic>> getTutorials({int page = 1, int limit = 10, String? tag}) async {
-    try {
-      final response = await _apiClient.get('/tutorials', queryParameters: {
-        'page': page,
-        'limit': limit,
-        if (tag != null) 'tag': tag,
-      });
-
-      if (response.statusCode == 200 && response.data['data'] != null) {
-        final List<dynamic> tutorialJson = response.data['data'];
-        final tutorials = tutorialJson.map((json) => TutorialSummary.fromJson(json)).toList();
-        
-        return {
-          'tutorials': tutorials,
-          'pagination': response.data['pagination'],
-        };
-      } else {
-        return {'tutorials': [], 'pagination': {}};
-      }
-    } catch (e) {
-      print('Failed to load tutorials: $e');
-      throw Exception('Failed to load tutorials: $e');
-    }
+  // SỬA: Thêm tham số tùy chọn page và limit
+  Future<List<TutorialSummary>> getTutorials({int? page, int? limit}) {
+    return _service.getTutorials(page: page, limit: limit);
   }
 
-  // Các hàm khác như getTutorialById, createTutorial sẽ được thêm vào đây sau
+  // Lấy thông tin chi tiết của một tutorial
+  Future<Tutorial> getTutorialById(String id) {
+    return _service.getTutorialById(id);
+  }
+
+  // Lấy danh sách các bài học của một tutorial
+  Future<List<LessonSummary>> getLessonsForTutorial(String tutorialId) {
+    return _service.getLessonsForTutorial(tutorialId);
+  }
 }
