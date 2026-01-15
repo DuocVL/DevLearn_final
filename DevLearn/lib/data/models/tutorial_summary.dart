@@ -25,8 +25,8 @@ class TutorialSummary {
 
   factory TutorialSummary.fromJson(Map<String, dynamic> json) {
     return TutorialSummary(
-      // SỬA: Lấy đúng trường `_id` từ JSON
-      id: json['_id'],
+      // SỬA LẠI: API trả về 'id' cho danh sách tutorials
+      id: json['id'],
       title: json['title'],
       description: json['description'] ?? '',
       tags: List<String>.from(json['tags'] ?? []),

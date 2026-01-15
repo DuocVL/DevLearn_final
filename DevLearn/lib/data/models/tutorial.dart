@@ -1,35 +1,31 @@
-import 'package:devlearn/data/models/lesson.dart';
+import 'package:devlearn/data/models/author.dart';
+import 'package:devlearn/data/models/lesson.dart'; // Sửa từ lesson_summary.dart thành lesson.dart nếu cần
 
 class Tutorial {
   final String id;
   final String title;
   final String description;
-  final List<LessonSummary> lessons;
-  final List<String> tags;
-  final int totalViews;
-  final double progress;
+  final Author author;
+  final List<Lesson> lessons; // SỬA: Thay LessonSummary bằng Lesson
 
   Tutorial({
     required this.id,
     required this.title,
     required this.description,
+    required this.author,
     required this.lessons,
-    required this.tags,
-    required this.totalViews,
-    required this.progress,
   });
 
   factory Tutorial.fromJson(Map<String, dynamic> json) {
     return Tutorial(
-      id: json['id'], // Sửa ở đây: từ '_id' thành 'id'
-      title: json['title'],
-      description: json['description'],
-      lessons: (json['lessons'] as List)
-          .map((i) => LessonSummary.fromJson(i))
-          .toList(),
-      tags: List<String>.from(json['tags'] ?? []),
-      totalViews: json['totalViews'] ?? 0,
-      progress: (json['progress'] as num?)?.toDouble() ?? 0.0,
+      id: json['_id'],
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      author: Author.fromJson(json['author'] ?? {},
+      ), // Cung cấp giá trị mặc định
+      lessons: (json['lessons'] as List? ?? [])
+          .map((e) => Lesson.fromJson(e as Map<String, dynamic>))
+          .toList(), // SỬA: Dùng Lesson.fromJson
     );
   }
 }
