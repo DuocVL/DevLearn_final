@@ -1,22 +1,19 @@
 class LessonSummary {
   final String id;
   final String title;
-  final int order;
-  final bool isCompleted;
+  final DateTime createdAt;
 
   LessonSummary({
     required this.id,
     required this.title,
-    required this.order,
-    this.isCompleted = false,
+    required this.createdAt,
   });
 
-  factory LessonSummary.fromJson(Map<String, dynamic> json){
+  factory LessonSummary.fromJson(Map<String, dynamic> json) {
     return LessonSummary(
-      id: json['id'], 
-      title: json['title'], 
-      order: json['order'],
-      isCompleted: json['isCompleted'] ?? false,
+      id: json['_id'] ?? '',
+      title: json['title'] ?? 'Không có tiêu đề',
+      createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
     );
   }
 }

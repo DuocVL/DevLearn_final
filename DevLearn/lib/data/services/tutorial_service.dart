@@ -1,5 +1,5 @@
 import 'package:devlearn/data/api_client.dart';
-import 'package:devlearn/data/models/lesson.dart';
+import 'package:devlearn/data/models/lesson_summary.dart';
 import 'package:devlearn/data/models/tutorial.dart';
 import 'package:devlearn/data/models/tutorial_summary.dart';
 import 'package:devlearn/main.dart';
@@ -45,14 +45,13 @@ class TutorialService {
     }
   }
 
-  // SỬA: Thay LessonSummary bằng Lesson
-  Future<List<Lesson>> getLessonsForTutorial(String tutorialId) async {
+  // SỬA: Trả về danh sách LessonSummary
+  Future<List<LessonSummary>> getLessonsForTutorial(String tutorialId) async {
     try {
       final response = await _apiClient.get('/tutorials/$tutorialId/lessons');
       if (response.statusCode == 200 && response.data['data'] != null) {
         final List<dynamic> lessonsJson = response.data['data'];
-        // SỬA: Dùng Lesson.fromJson
-        return lessonsJson.map((json) => Lesson.fromJson(json)).toList();
+        return lessonsJson.map((json) => LessonSummary.fromJson(json)).toList();
       } else {
         return [];
       }

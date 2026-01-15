@@ -5,16 +5,17 @@ import 'package:devlearn/main.dart';
 class LessonService {
   final ApiClient _apiClient = apiClient;
 
-  Future<Lesson> getLessonById(String id) async {
+  Future<Lesson> getLessonById(String lessonId) async {
     try {
-      final response = await _apiClient.get('/lessons/$id');
-      if (response.statusCode == 200) {
-        return Lesson.fromJson(response.data);
+      final response = await _apiClient.get('/lessons/$lessonId');
+      if (response.statusCode == 200 && response.data['data'] != null) {
+        return Lesson.fromJson(response.data['data']);
+      } else {
+        throw Exception('Không thể tải bài học');
       }
-      throw Exception('Failed to load lesson');
     } catch (e) {
-      print(e);
-      throw Exception('Failed to load lesson');
+      print('Failed to load lesson by id: $e');
+      throw Exception('Không thể tải bài học: $e');
     }
   }
 }

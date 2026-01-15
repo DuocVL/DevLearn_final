@@ -1,15 +1,14 @@
 class Author {
   final String id;
   final String username;
-  final String? avatar;
 
-  Author({required this.id, required this.username, this.avatar});
+  Author({required this.id, required this.username});
 
   factory Author.fromJson(Map<String, dynamic> json) {
     return Author(
-      id: json['_id'] ?? json['id'] ?? '',
+      // API trả về `_id` cho author object
+      id: json['_id'] ?? '',
       username: json['username'] ?? 'Anonymous',
-      avatar: json['avatar'],
     );
   }
 }
