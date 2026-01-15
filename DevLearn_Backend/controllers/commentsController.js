@@ -24,14 +24,16 @@ const handlerAddComment = async (req, res) => {
         if(!mongoose.Types.ObjectId.isValid(targetId)) return res.status(400).json({ message: "Invalid targetId" });
 
         if(parentCommentId && !mongoose.Types.ObjectId.isValid(parentCommentId)) return res.status(400).json({ message: "Invalid parentCommentId" });
+        
         const commentNew = await Comments.create(
             {
                 targetId: targetId,
                 targetType: targetType,
                 parentCommentId: parentCommentId ,
-                userId: req.user._id,
+                authorId: req.user._id, // Sửa: Dùng đúng tên trường authorId
+                authorName: req.user.username, // Sửa: Thêm authorName
                 content: content,
-                anonymous: anonymous,
+                anonymous: anonymous || false, // Đảm bảo có giá trị mặc định
             }
         );
 
@@ -61,7 +63,7 @@ const handlerUpdateComment = async (req, res) => {
         if(!comment) return res.status(404).json({ message: "Comment not found" });
 
         // CHO PHÉP ADMIN HOẶC CHỦ SỞ HỮU
-        if(!comment.userId.equals(req.user._id) && req.user.roles !== 'admin') {
+        if(!comment.authorId.equals(req.user._id) && req.user.role !== 'admin') { // Sửa: Dùng authorId
             return res.status(403).json({ message: "Forbidden: You do not have permission to update this comment" });
         }
 
@@ -93,7 +95,7 @@ const handlerDeleteComment = async (req, res) => {
         if(comment.isDeleted) return res.status(400).json({ message: "Comment already deleted" });
 
         // CHO PHÉP ADMIN HOẶC CHỦ SỞ HỮU
-        if(!comment.userId.equals(req.user._id) && req.user.roles !== 'admin') {
+        if(!comment.authorId.equals(req.user._id) && req.user.role !== 'admin') { // Sửa: Dùng authorId
              return res.status(403).json({ message: "Forbidden: You do not have permission to delete this comment" });
         }
 
@@ -110,8 +112,8 @@ const handlerDeleteComment = async (req, res) => {
             {
                 content: "This comment has been deleted.",
                 isDeleted: true,
-                anonymous: false, // Xóa trạng thái ẩn danh khi đã xóa
-                userId: null // Xóa liên kết đến user
+                anonymous: false, 
+                authorId: null // Xóa liên kết đến user
             }
         );
 
@@ -126,14 +128,10 @@ const handlerDeleteComment = async (req, res) => {
 const sanitizeComments = (comments) => {
     return comments.map(comment => {
         if (comment.anonymous) {
-            // Thay thế thông tin user thật bằng thông tin ẩn danh
-            comment.userId = {
-                _id: null,
-                username: 'Anonymous',
-                avatar: '' // URL tới avatar mặc định
-            };
+            comment.authorId = null; // Ẩn thông tin author
+            comment.authorName = 'Anonymous';
         }
-        delete comment.anonymous; // Xóa trường anonymous khỏi output
+        // Không cần xóa trường anonymous nữa, để client có thể biết
         return comment;
     });
 }
@@ -159,7 +157,7 @@ const handlerGetListComment = async (req, res) => {
  
         let listcomment = await Comments.find(query)
         .populate({
-            path: "userId",
+            path: "authorId", // Sửa: Populate đúng trường
             select: "username avatar",
         })
         .sort({ createdAt: -1})
@@ -167,8 +165,21 @@ const handlerGetListComment = async (req, res) => {
         .limit(parseInt(limit))
         .lean();
 
+        // Thay thế authorId bằng object chứa thông tin user
+        // và xử lý ẩn danh
+        const processedComments = listcomment.map(comment => {
+            const newComment = { ...comment };
+            if (newComment.anonymous) {
+                newComment.author = { _id: null, username: 'Anonymous', avatar: '' };
+            } else if (newComment.authorId) {
+                newComment.author = newComment.authorId;
+            }
+            delete newComment.authorId;
+            return newComment;
+        });
+
         return res.status(200).json({
-            data: sanitizeComments(listcomment),
+            data: processedComments,
             pagination: {
                 currentPage: parseInt(page),
                 totalPages: Math.ceil(total / limit),
@@ -194,7 +205,7 @@ const handlerGetReply = async (req, res) => {
 
         let replies = await Comments.find({ parentCommentId: parentCommentId })
         .populate({
-            path: "userId",
+            path: "authorId", // Sửa: Populate đúng trường
             select: "username avatar",
         })
         .sort({ createdAt: 1}) // Sắp xếp từ cũ đến mới cho reply
@@ -202,7 +213,19 @@ const handlerGetReply = async (req, res) => {
         .limit(parseInt(limit))
         .lean();
 
-        return res.status(200).json({ data: sanitizeComments(replies) });
+        // Xử lý ẩn danh tương tự
+        const processedReplies = replies.map(reply => {
+            const newReply = { ...reply };
+            if (newReply.anonymous) {
+                newReply.author = { _id: null, username: 'Anonymous', avatar: '' };
+            } else if (newReply.authorId) {
+                newReply.author = newReply.authorId;
+            }
+            delete newReply.authorId;
+            return newReply;
+        });
+
+        return res.status(200).json({ data: processedReplies });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: "Internal server error" });

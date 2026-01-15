@@ -5,15 +5,15 @@ const RefreshTokens = require('../models/RefreshTokens');
  * Creates a pair of new access and refresh tokens.
  * @param {string} userId - The user's ID.
  * @param {string} email - The user's email.
- * @param {Array<string>} roles - The user's roles.
+ * @param {string} role - The user's role.
  * @returns {{accessToken: string, refreshToken: string}}
  */
-const signTokenPair = (userId, email, roles = ['user']) => {
+const signTokenPair = (userId, email, role = 'user') => {
     const payload = { 
         UserInfo: { 
             userId: userId,
             email: email,
-            roles: roles
+            role: role // Đã sửa từ roles thành role
         }
     };
 

@@ -17,7 +17,7 @@ const handlerNewUser = async (req, res) => {
     try {
         // 2. Check for duplicates
         const existsUsername = await Users.findOne({ username });
-        if (existsUsername) return res.status(409).json({ message: "Username already used" }); // 409 Conflict is more appropriate
+        if (existsUsername) return res.status(409).json({ message: "Username already used" });
         const existsEmail = await Users.findOne({ email });
         if (existsEmail) return res.status(409).json({ message: "Email already used" });
 
@@ -25,7 +25,6 @@ const handlerNewUser = async (req, res) => {
         const hash = await bcrypt.hash(password, 10);
         const newUser = await Users.create({ provider: 'local', email, username, passwordHash: hash });
         
-        // Exclude password hash from the response
         const userResponse = newUser.toObject();
         delete userResponse.passwordHash;
 
@@ -39,7 +38,8 @@ const handlerNewUser = async (req, res) => {
 const handleLogin = async (req, res) => {
     try {
       const user = req.user;
-      const { accessToken, refreshToken } = signTokenPair(user._id, user.email, user.roles);
+      // SỬA Ở ĐÂY: Dùng user.role thay vì user.roles
+      const { accessToken, refreshToken } = signTokenPair(user._id, user.email, user.role);
       await upsertRefreshToken(user._id, user.email, refreshToken);
       
       res.json({
@@ -48,7 +48,7 @@ const handleLogin = async (req, res) => {
               _id: user._id,
               email: user.email,
               username: user.username,
-              roles: user.roles,
+              role: user.role, // Sửa ở đây
               provider: user.provider
           },
           accessToken,
@@ -61,14 +61,13 @@ const handleLogin = async (req, res) => {
 };
 
 const handlerLogout = async (req, res) => {
-    // Logout does not need validation as it checks for token existence
     try {
         const { refreshToken } = req.body || {};
         if (refreshToken) {
             await RefreshTokens.deleteOne({ refreshToken });
             return res.status(200).json({ message: 'Logout successful' });
         }
-        return res.sendStatus(204); // No content, successful logout
+        return res.sendStatus(204);
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: 'Internal server error' });
@@ -85,7 +84,6 @@ const handlerForgotPassword = async (req, res) => {
     try {
         const user = await Users.findOne({ email });
         if (!user) {
-            // Respond with success to prevent user enumeration
             return res.status(200).json({ message: "If a user with that email exists, a code has been sent." });
         }
 
@@ -122,7 +120,7 @@ const handlerResetPassword = async (req, res) => {
         }
 
         user.passwordHash = await bcrypt.hash(newPassword, 10);
-        user.resetPasswordCode = undefined; // Use undefined to remove from mongo
+        user.resetPasswordCode = undefined;
         user.resetPasswordExpires = undefined;
         await user.save();
 

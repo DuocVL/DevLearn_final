@@ -1,24 +1,26 @@
 const express = require('express');
 const router = express.Router();
 const { handlerAddPost, handlerUpdatePost, handlerDeletePost, handlerGetPost, handleGetListPost } = require('../controllers/postsController');
+const verifyJWT = require('../middleware/verifyJWT'); // Import middleware verifyJWT
 
-// Matches GET /posts
+// Các route CÔNG KHAI (không cần token)
+// GET /posts -> Lấy danh sách tất cả bài viết
 router.get('/', handleGetListPost);
 
-// Matches POST /posts
-router.post('/', handlerAddPost);
-
-// IMPORTANT: Specific routes like /:postId must come after general ones like / 
-// But since GET / and GET /:postId are different methods, order doesn't matter as much here.
-
-// Matches GET /posts/some-post-id
+// GET /posts/some-post-id -> Lấy chi tiết một bài viết
 router.get('/:postId', handlerGetPost);
 
-// Matches PATCH /posts/some-post-id
-router.patch('/:postId', handlerUpdatePost); // Changed from router.patch('/', ...)
 
-// Matches DELETE /posts/some-post-id
-router.delete('/:postId', handlerDeletePost); // Changed from router.delete('/', ...)
+// Các route BẢO VỆ (yêu cầu token hợp lệ)
+
+// POST /posts -> Tạo bài viết mới
+router.post('/', verifyJWT, handlerAddPost);
+
+// PATCH /posts/some-post-id -> Cập nhật bài viết
+router.patch('/:postId', verifyJWT, handlerUpdatePost);
+
+// DELETE /posts/some-post-id -> Xóa bài viết
+router.delete('/:postId', verifyJWT, handlerDeletePost);
 
 
 module.exports = router;
