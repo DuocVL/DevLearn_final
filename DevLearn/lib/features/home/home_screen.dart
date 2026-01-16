@@ -5,7 +5,7 @@ import 'package:devlearn/features/home/problem_page.dart';
 import 'package:devlearn/features/home/profile_page.dart';
 import 'package:devlearn/features/home/tutorial_page.dart';
 import 'package:flutter/material.dart';
-
+import 'package:devlearn/routes/route_name.dart';
 class HomeScreen extends StatefulWidget {
   // SỬA: Thêm callback để xử lý đăng xuất
   final VoidCallback onLogout;
@@ -61,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: _selectedIndex == 3
           ? FloatingActionButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/create_post');
+                Navigator.pushNamed(context, RouteName.createPost);
               },
               child: const Icon(Icons.add),
             )

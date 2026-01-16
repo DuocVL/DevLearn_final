@@ -1,5 +1,6 @@
 import 'package:devlearn/data/models/post.dart';
 import 'package:flutter/material.dart';
+import 'package:devlearn/features/post/post_screen.dart';
 
 class PostItem extends StatefulWidget {
   final Post post;
@@ -42,7 +43,7 @@ class _PostItemState extends State<PostItem> {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
-          // Navigator.push(context, MaterialPageRoute(builder: (context) => PostScreen(post: widget.post)));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => PostScreen(post: widget.post)));
         },
         child: Padding(
           padding: const EdgeInsets.all(16),

@@ -61,7 +61,7 @@ class ApiClient {
     try {
       final refreshToken = await _secureStorage.read(key: 'refresh_token');
       if (refreshToken == null) return false;
-
+      
       final dio = Dio(BaseOptions(baseUrl: _dio.options.baseUrl));
       final response = await dio.post(
         '/auth/refresh',
