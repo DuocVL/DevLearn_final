@@ -6,7 +6,6 @@ class Author {
 
   factory Author.fromJson(Map<String, dynamic> json) {
     return Author(
-      // API trả về `_id` cho author object
       id: json['_id'] ?? '',
       username: json['username'] ?? 'Anonymous',
     );

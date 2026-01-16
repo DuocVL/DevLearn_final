@@ -7,7 +7,7 @@ class RefreshTokenRepository {
   final _refreshTokenService = RefreshTokenService();
   final _storage = const FlutterSecureStorage();
 
-  /// Calls backend refresh and updates stored tokens. Returns true on success.
+  
   Future<bool> refreshToken() async {
     final res = await _refreshTokenService.refreshToken();
 

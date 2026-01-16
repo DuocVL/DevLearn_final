@@ -43,12 +43,12 @@ class _HomeScreenState extends State<HomeScreen> {
     final isDarkMode = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      // Xóa AppBar chung để mỗi trang tự quản lý header
+
       body: IndexedStack(
         index: _selectedIndex,
         children: _pages,
       ),
-      floatingActionButton: _selectedIndex == 3 // Chỉ hiển thị ở trang PostPage
+      floatingActionButton: _selectedIndex == 3 
           ? FloatingActionButton(
               onPressed: () {
                 Navigator.pushNamed(context, RouteName.createPost);
@@ -67,13 +67,13 @@ class _HomeScreenState extends State<HomeScreen> {
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
           items: AppBottomNavItems.items,
-          type: BottomNavigationBarType.fixed, // Giữ các item cố định
-          backgroundColor: theme.scaffoldBackgroundColor, // Màu nền thích ứng
-          selectedItemColor: theme.primaryColor, // Màu cho item được chọn
-          unselectedItemColor: isDarkMode ? Colors.grey.shade500 : Colors.grey.shade600, // Màu cho item chưa được chọn
-          showSelectedLabels: false, // Ẩn label để chỉ hiện icon
+          type: BottomNavigationBarType.fixed, 
+          backgroundColor: theme.scaffoldBackgroundColor, 
+          selectedItemColor: theme.primaryColor, 
+          unselectedItemColor: isDarkMode ? Colors.grey.shade500 : Colors.grey.shade600, 
+          showSelectedLabels: false, 
           showUnselectedLabels: false,
-          elevation: 0, // Bỏ đổ bóng mặc định
+          elevation: 0, 
         ),
       ),
     );

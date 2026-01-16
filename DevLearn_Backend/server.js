@@ -29,7 +29,6 @@ async function startServer() {
   app.use(express.json());
   app.use(passport.initialize());
 
-  // --- Define Routes ---
   // Các route không yêu cầu xác thực JWT mặc định
   app.use('/auth', authRoutes);
   app.use('/refresh', refreshRoutes);
@@ -50,7 +49,7 @@ async function startServer() {
   });
 }
 
-// Start the entire application
+
 startServer().catch(err => {
   console.error("Failed to start server:", err);
   process.exit(1);

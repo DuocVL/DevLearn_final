@@ -14,7 +14,7 @@ class TutorialRepository {
     return _service.getTutorialById(id);
   }
 
-  // SỬA: Trả về danh sách LessonSummary
+
   Future<List<LessonSummary>> getLessonsForTutorial(String tutorialId) {
     return _service.getLessonsForTutorial(tutorialId);
   }

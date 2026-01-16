@@ -5,14 +5,13 @@ const { spawn } = require('child_process');
 const mongoose = require('mongoose');
 const Submissions = require('../models/Submissions');
 const Problems = require('../models/Problems');
-const User = require('../models/User'); // <-- IMPORT USER MODEL
+const User = require('../models/User'); //
 const { redisWorkerClient } = require('../config/redis');
 const { getLanguageConfig } = require('../config/languageConfig');
 
 const SUBMISSION_QUEUE = 'submissionQueue';
 const TEMPLATE_PLACEHOLDER = 'USER_CODE_PLACEHOLDER';
 
-// ... (Hàm executeCommand không thay đổi) ...
 async function executeCommand(image, commandConfig, tmpdir, containerDir, timeLimit, input = null, measureResources = false) {
     const stdinFileName = 'stdin.txt';
     let userCommand = `${commandConfig.cmd} ${commandConfig.args.join(' ')}`;

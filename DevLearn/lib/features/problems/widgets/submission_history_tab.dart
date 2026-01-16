@@ -20,7 +20,7 @@ class SubmissionHistoryTabState extends State<SubmissionHistoryTab> {
   void initState() {
     super.initState();
     timeago.setLocaleMessages('vi', timeago.ViMessages());
-    refresh(); // Tải dữ liệu lần đầu
+    refresh();
   }
 
   void refresh() {

@@ -1,16 +1,16 @@
 const languageConfig = {
     python: {
-        image: 'codejudge-env', // <-- SỬ DỤNG IMAGE TÙY CHỈNH
+        image: 'codejudge-env', 
         srcFileName: 'main.py',
         containerDir: '/app',
-        compileCmd: null, // Python is interpreted
+        compileCmd: null, 
         runCmd: {
-            cmd: 'python3', // <-- ĐỔI THÀNH python3
+            cmd: 'python3', 
             args: ['main.py']
         }
     },
     cpp: {
-        image: 'codejudge-env', // <-- SỬ DỤNG IMAGE TÙY CHỈNH
+        image: 'codejudge-env', 
         srcFileName: 'main.cpp',
         containerDir: '/app',
         compileCmd: {

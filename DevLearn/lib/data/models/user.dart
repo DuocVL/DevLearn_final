@@ -1,6 +1,6 @@
 class User {
   final String id;
-  // SỬA: Đổi tên thuộc tính để đồng bộ
+
   final String username;
   final String email;
   final String? avatarUrl;
@@ -10,7 +10,7 @@ class User {
 
   User({
     required this.id,
-    // SỬA: Cập nhật constructor
+   
     required this.username,
     required this.email,
     this.avatarUrl,
@@ -24,7 +24,7 @@ class User {
 
     return User(
       id: userData['_id'] ?? '',
-      // SỬA: Gán vào thuộc tính `username` mới
+   
       username: userData['username'] ?? 'No Name',
       email: userData['email'] ?? '',
       avatarUrl: userData['avatarUrl'],

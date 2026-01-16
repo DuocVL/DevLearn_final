@@ -24,7 +24,7 @@ class _LessonScreenState extends State<LessonScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bài học'), // Tiêu đề mặc định
+        title: const Text('Bài học'),
       ),
       body: FutureBuilder<Lesson>(
         future: _lessonFuture,
@@ -41,7 +41,7 @@ class _LessonScreenState extends State<LessonScreen> {
 
           final lesson = snapshot.data!;
 
-          // Cập nhật tiêu đề AppBar sau khi có dữ liệu
+        
           return Scaffold(
             appBar: AppBar(title: Text(lesson.title)),
             body: SingleChildScrollView(
@@ -50,7 +50,7 @@ class _LessonScreenState extends State<LessonScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    lesson.content, // Hiển thị nội dung bài học
+                    lesson.content, 
                     style: const TextStyle(fontSize: 16, height: 1.5),
                   ),
                 ],

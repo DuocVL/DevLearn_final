@@ -30,8 +30,8 @@ const handlerAddComment = async (req, res) => {
                 targetId: targetId,
                 targetType: targetType,
                 parentCommentId: parentCommentId ,
-                authorId: req.user._id, // Sửa: Dùng đúng tên trường authorId
-                authorName: req.user.username, // Sửa: Thêm authorName
+                authorId: req.user._id, 
+                authorName: req.user.username, 
                 content: content,
                 anonymous: anonymous || false, // Đảm bảo có giá trị mặc định
             }
@@ -63,7 +63,7 @@ const handlerUpdateComment = async (req, res) => {
         if(!comment) return res.status(404).json({ message: "Comment not found" });
 
         // CHO PHÉP ADMIN HOẶC CHỦ SỞ HỮU
-        if(!comment.authorId.equals(req.user._id) && req.user.role !== 'admin') { // Sửa: Dùng authorId
+        if(!comment.authorId.equals(req.user._id) && req.user.role !== 'admin') {
             return res.status(403).json({ message: "Forbidden: You do not have permission to update this comment" });
         }
 
@@ -95,7 +95,7 @@ const handlerDeleteComment = async (req, res) => {
         if(comment.isDeleted) return res.status(400).json({ message: "Comment already deleted" });
 
         // CHO PHÉP ADMIN HOẶC CHỦ SỞ HỮU
-        if(!comment.authorId.equals(req.user._id) && req.user.role !== 'admin') { // Sửa: Dùng authorId
+        if(!comment.authorId.equals(req.user._id) && req.user.role !== 'admin') {
              return res.status(403).json({ message: "Forbidden: You do not have permission to delete this comment" });
         }
 
@@ -113,7 +113,7 @@ const handlerDeleteComment = async (req, res) => {
                 content: "This comment has been deleted.",
                 isDeleted: true,
                 anonymous: false, 
-                authorId: null // Xóa liên kết đến user
+                authorId: null 
             }
         );
 
@@ -157,7 +157,7 @@ const handlerGetListComment = async (req, res) => {
  
         let listcomment = await Comments.find(query)
         .populate({
-            path: "authorId", // Sửa: Populate đúng trường
+            path: "authorId", 
             select: "username avatar",
         })
         .sort({ createdAt: -1})
@@ -205,10 +205,10 @@ const handlerGetReply = async (req, res) => {
 
         let replies = await Comments.find({ parentCommentId: parentCommentId })
         .populate({
-            path: "authorId", // Sửa: Populate đúng trường
+            path: "authorId", 
             select: "username avatar",
         })
-        .sort({ createdAt: 1}) // Sắp xếp từ cũ đến mới cho reply
+        .sort({ createdAt: 1}) 
         .skip(skip)
         .limit(parseInt(limit))
         .lean();

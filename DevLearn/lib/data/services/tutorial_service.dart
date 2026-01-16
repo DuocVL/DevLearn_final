@@ -45,7 +45,7 @@ class TutorialService {
     }
   }
 
-  // SỬA: Trả về danh sách LessonSummary
+
   Future<List<LessonSummary>> getLessonsForTutorial(String tutorialId) async {
     try {
       final response = await _apiClient.get('/tutorials/$tutorialId/lessons');

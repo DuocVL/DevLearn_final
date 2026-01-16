@@ -15,7 +15,7 @@ class _ProblemPageState extends State<ProblemPage> {
   final _scrollController = ScrollController();
 
   final List<ProblemSummary> _problems = [];
-  // Sửa đổi bộ lọc để phù hợp với giá trị từ API
+
   final List<Map<String, String>> _filters = [
     {"label": "Tất cả", "value": "All"},
     {"label": "Dễ", "value": "Easy"},

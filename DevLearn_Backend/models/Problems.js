@@ -24,7 +24,7 @@ const problemsSchema = new mongoose.Schema({
     testcases: [testcaseSchema],
     timeLimit: { type: Number, default: 2 }, // Time limit in seconds. Default is 2s.
     
-    // -- NEW: LeetCode-style templating fields --
+   
     codeTemplates: [codeTemplateSchema],
     starterCode: [starterCodeSchema],
     // ------------------------------------------

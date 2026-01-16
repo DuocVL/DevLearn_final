@@ -20,7 +20,7 @@ class _TutorialDetailScreenState extends State<TutorialDetailScreen> {
   @override
   void initState() {
     super.initState();
-    // Lấy danh sách các bài học (chỉ tóm tắt)
+  
     _lessonsFuture = _tutorialRepository.getLessonsForTutorial(widget.tutorialSummary.id);
   }
 
@@ -57,7 +57,7 @@ class _TutorialDetailScreenState extends State<TutorialDetailScreen> {
                 // Có thể thêm icon nếu lessonSummary có trường isPreviewable
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
-                  // Điều hướng đến màn hình chi tiết, truyền đối tượng tóm tắt
+          
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => LessonDetailScreen(

@@ -7,7 +7,7 @@ import 'package:devlearn/theme/app_theme.dart';
 import 'package:devlearn/routes/app_route.dart';
 import 'package:flutter/material.dart';
 
-// SỬA LỖI: Hợp nhất logic quản lý trạng thái từ MyApp vào DevLearnApp
+
 class DevLearnApp extends StatefulWidget {
   const DevLearnApp({super.key});
 
@@ -24,7 +24,7 @@ class _DevLearnAppState extends State<DevLearnApp> {
     _userFuture = authRepository.checkAuth();
   }
 
-  // Hàm callback để cập nhật trạng thái xác thực và xây dựng lại UI
+
   void _updateAuthenticationState() {
     setState(() {
       _userFuture = authRepository.checkAuth();
@@ -34,14 +34,14 @@ class _DevLearnAppState extends State<DevLearnApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      navigatorKey: navigatorKey, // Sử dụng GlobalKey để điều hướng từ bất cứ đâu
+      navigatorKey: navigatorKey, 
       debugShowCheckedModeBanner: true,
       title: 'DevLearn',
-      // Giữ lại cài đặt theme của bạn
+    
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
-      // SỬA LỖI: Sử dụng FutureBuilder để quản lý màn hình ban đầu
+   
       home: FutureBuilder<User?>(
         future: _userFuture,
         builder: (context, snapshot) {
@@ -56,7 +56,7 @@ class _DevLearnAppState extends State<DevLearnApp> {
           }
         },
       ),
-      // SỬA LỖI: Thay thế `routes` và `initialRoute` bằng `onGenerateRoute`
+    
       onGenerateRoute: (settings) => AppRoute.onGenerateRoute(
         settings,
         onLoginSuccess: _updateAuthenticationState,

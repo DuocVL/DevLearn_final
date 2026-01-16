@@ -26,13 +26,13 @@ class _SplashScreenState extends State<SplashScreen> {
 
     final access = await _storage.read(key: 'access_token');
     if (access != null && access.isNotEmpty) {
-      // We have an access token; proceed to home. If token later fails, repo will refresh when needed.
+   
       if (!mounted) return;
       _goToHome();
       return;
     }
 
-    // Try refreshing using refresh token
+
     try {
       final ok = await _refreshRepo.refreshToken();
       if (ok) {
@@ -41,9 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
         return;
       }
     } catch (e, st) {
-      // network or parsing error during refresh -> go to login
-      // keep a short log for debugging
-      // ignore: avoid_print
+
       print('Splash: refreshToken error: $e\n$st');
     }
 

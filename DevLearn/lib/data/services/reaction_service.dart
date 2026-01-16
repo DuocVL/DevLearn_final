@@ -14,7 +14,7 @@ class ReactionService {
   static String _envOrDefault() {
     final env = dotenv.env['BACKEND_URL'];
     if (env != null && env.isNotEmpty) return '${env.replaceAll(RegExp(r'/$'), '')}/reactions';
-    // Default to Android emulator host when BACKEND_URL not provided
+
     return 'http://10.0.2.2:4000/reactions';
   }
   final _storage = const FlutterSecureStorage();

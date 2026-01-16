@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-// Hàm callback khi xác thực thất bại
+
 typedef OnAuthenticationFailure = void Function();
 
 class ApiClient {
@@ -9,7 +9,7 @@ class ApiClient {
   final FlutterSecureStorage _secureStorage;
   final OnAuthenticationFailure _onAuthenticationFailure;
 
-  // DANH SÁCH CÁC ĐƯỜNG DẪN CÔNG KHAI
+
   static const _publicPaths = [
     '/auth/login',
     '/auth/register',

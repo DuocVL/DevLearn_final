@@ -3,7 +3,7 @@ import 'package:devlearn/data/models/lesson_summary.dart';
 import 'package:devlearn/data/repositories/lesson_repository.dart';
 import 'package:flutter/material.dart';
 
-// SỬA: Chuyển thành StatefulWidget
+
 class LessonDetailScreen extends StatefulWidget {
   final LessonSummary lessonSummary;
 
@@ -15,13 +15,13 @@ class LessonDetailScreen extends StatefulWidget {
 
 class _LessonDetailScreenState extends State<LessonDetailScreen> {
   final LessonRepository _lessonRepository = LessonRepository();
-  // Giữ Future của lesson chi tiết
+
   late Future<Lesson> _lessonDetailFuture;
 
   @override
   void initState() {
     super.initState();
-    // Gọi API để lấy chi tiết bài học dựa trên ID từ lessonSummary
+
     _lessonDetailFuture = _lessonRepository.getLessonById(widget.lessonSummary.id);
   }
 
@@ -29,10 +29,10 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // Lấy title từ widget ban đầu cho tới khi có dữ liệu
+      
         title: Text(widget.lessonSummary.title),
       ),
-      // SỬA: Dùng FutureBuilder để xử lý việc tải dữ liệu
+   
       body: FutureBuilder<Lesson>(
         future: _lessonDetailFuture,
         builder: (context, snapshot) {
@@ -48,7 +48,7 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
             return const Center(child: Text('Không tìm thấy nội dung bài học.'));
           }
 
-          // Đã có dữ liệu, gán vào biến `lesson`
+    
           final lesson = snapshot.data!;
 
           return SingleChildScrollView(
@@ -73,7 +73,7 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
                     const SizedBox(width: 16),
                     const Icon(Icons.calendar_today_outlined, size: 16),
                     const SizedBox(width: 4),
-                    // Cân nhắc dùng thư viện intl để định dạng ngày tháng
+            
                     Text(lesson.createdAt.toLocal().toString().split(' ')[0]),
                   ],
                 ),

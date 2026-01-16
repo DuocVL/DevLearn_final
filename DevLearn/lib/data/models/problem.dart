@@ -1,6 +1,4 @@
-/// SỬA ĐỔI HOÀN TOÀN FILE NÀY ĐỂ ĐỒNG BỘ VỚI SERVER
 
-// 1. Đổi tên class Example -> Testcase và cập nhật trường cho khớp với `testcaseSchema`
 class Testcase {
   final String input;
   final String output;
@@ -35,17 +33,17 @@ class StarterCode {
   }
 }
 
-// 2. Cập nhật toàn bộ class Problem
+
 class Problem {
   final String id;
   final String title;
   final String description;
   final String difficulty;
   final List<String> tags;
-  final List<Testcase> testcases; // SỬA: Đổi từ examples -> testcases
+  final List<Testcase> testcases; 
   final List<StarterCode> starterCode;
-  final int totalSubmissions;     // SỬA: Thêm trường này
-  final int acceptedSubmissions;  // SỬA: Thêm trường này
+  final int totalSubmissions;   
+  final int acceptedSubmissions;  
 
   Problem({
     required this.id,
@@ -59,9 +57,9 @@ class Problem {
     required this.acceptedSubmissions,
   });
 
-  // 3. Cập nhật lại hoàn toàn hàm fromJson
+
   factory Problem.fromJson(Map<String, dynamic> json) {
-    // Kỹ thuật an toàn để xử lý danh sách có thể chứa null
+
     final safeTags = (json['tags'] as List<dynamic>? ?? [])
         .map((tag) => tag as String?)
         .where((tag) => tag != null)
@@ -77,7 +75,7 @@ class Problem {
         .toList();
 
     return Problem(
-      id: json['_id'] as String? ?? '', // Backend dùng '_id'
+      id: json['_id'] as String? ?? '',
       title: json['title'] as String? ?? 'No Title',
       description: json['description'] as String? ?? '',
       difficulty: json['difficulty'] as String? ?? 'Unknown',

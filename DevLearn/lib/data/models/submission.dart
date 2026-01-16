@@ -6,7 +6,7 @@ class SubmissionResult {
 
   factory SubmissionResult.fromJson(Map<String, dynamic> json) {
     return SubmissionResult(
-      // SỬA: Xử lý null cho passedCount và totalCount
+    
       passedCount: json['passedCount'] as int? ?? 0,
       totalCount: json['totalCount'] as int? ?? 0,
     );
@@ -20,7 +20,7 @@ class Submission {
   final String language;
   final String code;
   final String status;
-  final SubmissionResult? result; // SỬA: result có thể null
+  final SubmissionResult? result;
   final int runtime;
   final int memory;
   final DateTime createdAt;
@@ -33,7 +33,7 @@ class Submission {
     required this.language,
     required this.code,
     required this.status,
-    this.result, // SỬA: result không còn là required
+    this.result, 
     required this.runtime,
     required this.memory,
     required this.createdAt,
@@ -48,11 +48,11 @@ class Submission {
       language: json['language'] as String,
       code: json['code'] as String,
       status: json['status'] as String,
-      // SỬA: Kiểm tra null cho result
+
       result: json['result'] != null
           ? SubmissionResult.fromJson(json['result'] as Map<String, dynamic>)
           : null,
-      // SỬA: Xử lý null cho runtime và memory
+  
       runtime: json['runtime'] as int? ?? 0,
       memory: json['memory'] as int? ?? 0,
       createdAt: DateTime.parse(json['createdAt'] as String),

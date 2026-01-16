@@ -7,7 +7,7 @@ const Lessons = require('../models/Lessons');
 // @access  Admin
 const handlerCreateLesson = async (req, res) => {
     try {
-        if (req.user.role !== 'admin') { // Sửa: Dùng role
+        if (req.user.role !== 'admin') { 
             return res.status(403).json({ message: "Not authorized" });
         }
 
@@ -48,7 +48,7 @@ const handlerCreateLesson = async (req, res) => {
 // @access  Admin
 const handlerUpdateLesson = async (req, res) => {
     try {
-        if (req.user.role !== 'admin') { // Sửa: Dùng role
+        if (req.user.role !== 'admin') { 
             return res.status(403).json({ message: "Not authorized" });
         }
 
@@ -87,7 +87,7 @@ const handlerUpdateLesson = async (req, res) => {
 // @access  Admin
 const handlerDeleteLesson = async (req, res) => {
     try {
-        if (req.user.role !== 'admin') { // Sửa: Dùng role
+        if (req.user.role !== 'admin') { 
             return res.status(403).json({ message: "Not authorized" });
         }
 

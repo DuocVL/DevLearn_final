@@ -8,7 +8,6 @@ class Lesson {
   final int views;
   final DateTime createdAt;
   final DateTime updatedAt;
-  // Thêm một trường đơn giản để giữ ID của tutorial
   final String tutorialId;
 
   Lesson({
@@ -25,7 +24,6 @@ class Lesson {
   });
 
   factory Lesson.fromJson(Map<String, dynamic> json) {
-    // API trả về tutorialId là một object, ta chỉ cần lấy _id từ nó
     final tutorialInfo = json['tutorialId'] as Map<String, dynamic>? ?? {};
 
     return Lesson(

@@ -1,6 +1,6 @@
 import 'package:devlearn/data/models/problem.dart';
 import 'package:devlearn/data/repositories/problem_repository.dart';
-// THÊM: Import repository cho submission
+
 import 'package:devlearn/data/repositories/submission_repository.dart';
 import 'package:devlearn/features/problems/widgets/code_editor.dart';
 import 'package:devlearn/features/problems/widgets/submission_history_tab.dart';
@@ -16,12 +16,12 @@ class ProblemScreen extends StatefulWidget {
 }
 
 class _ProblemScreenState extends State<ProblemScreen> with TickerProviderStateMixin {
-  // THÊM: Khởi tạo các repository và controller cần thiết
+ 
   final ProblemRepository _problemRepo = ProblemRepository();
   final SubmissionRepository _submissionRepo = SubmissionRepository();
   late Future<Problem> _problemFuture;
   late TabController _tabController;
-  // THÊM: GlobalKey để có thể gọi phương thức của State con
+
   final _historyTabKey = GlobalKey<SubmissionHistoryTabState>();
 
 
@@ -32,9 +32,9 @@ class _ProblemScreenState extends State<ProblemScreen> with TickerProviderStateM
     _tabController = TabController(length: 3, vsync: this);
   }
 
-  // SỬA: Triển khai logic nộp bài hoàn chỉnh
+
   Future<void> _handleSubmit(String language, String code) async {
-    // Hiển thị loading indicator
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
@@ -44,7 +44,7 @@ class _ProblemScreenState extends State<ProblemScreen> with TickerProviderStateM
             Text("Đang nộp bài..."),
           ],
         ),
-        duration: const Duration(minutes: 1), // Giữ snackbar mở
+        duration: const Duration(minutes: 1), 
       ),
     );
 
@@ -55,8 +55,7 @@ class _ProblemScreenState extends State<ProblemScreen> with TickerProviderStateM
         code: code,
       );
 
-      // Ẩn loading và hiển thị thông báo thành công
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Nộp bài thành công! Kết quả sẽ sớm được cập nhật.'),
@@ -64,14 +63,14 @@ class _ProblemScreenState extends State<ProblemScreen> with TickerProviderStateM
         ),
       );
 
-      // Tự động chuyển sang tab lịch sử
+     
       _tabController.animateTo(2);
 
-      // Gọi phương thức refresh của tab lịch sử để cập nhật danh sách
+   
       _historyTabKey.currentState?.refresh();
 
     } catch (e) {
-      // Ẩn loading và hiển thị thông báo lỗi
+  
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -144,7 +143,6 @@ class _ProblemScreenState extends State<ProblemScreen> with TickerProviderStateM
     );
   }
 
-  // ... (các hàm build khác giữ nguyên) ...
   Widget _buildDescriptionTab(Problem problem) {
     final theme = Theme.of(context);
     final double acceptanceRate = (problem.totalSubmissions > 0)

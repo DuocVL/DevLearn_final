@@ -38,7 +38,7 @@ const handlerNewUser = async (req, res) => {
 const handleLogin = async (req, res) => {
     try {
       const user = req.user;
-      // SỬA Ở ĐÂY: Dùng user.role thay vì user.roles
+
       const { accessToken, refreshToken } = signTokenPair(user._id, user.email, user.role);
       await upsertRefreshToken(user._id, user.email, refreshToken);
       
@@ -48,7 +48,7 @@ const handleLogin = async (req, res) => {
               _id: user._id,
               email: user.email,
               username: user.username,
-              role: user.role, // Sửa ở đây
+              role: user.role, 
               provider: user.provider
           },
           accessToken,

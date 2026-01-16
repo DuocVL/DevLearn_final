@@ -39,8 +39,8 @@ Future<void> main() async {
   );
   authRepository = AuthRepository();
 
-  // SỬA: Chạy DevLearnApp thay vì MyApp
+
   runApp(const DevLearnApp());
 }
 
-// XÓA: Lớp MyApp không còn cần thiết nữa
+

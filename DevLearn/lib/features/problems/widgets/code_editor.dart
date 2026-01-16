@@ -35,7 +35,7 @@ class _CodeEditorState extends State<CodeEditor> {
     }
   }
 
-  // SỬA: Không cần truy cập context ở đây nữa
+
   void _initializeController() {
     final sourceCode = widget.starterCode[_selectedLanguage] ?? '';
     final languageMode = {
@@ -48,15 +48,14 @@ class _CodeEditorState extends State<CodeEditor> {
     _codeController = CodeController(
       text: sourceCode,
       language: languageMode,
-      // SỬA: Xóa bỏ thuộc tính theme không hợp lệ
+
     );
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Nếu controller chưa được khởi tạo, hãy thử lại
-    // Điều này có thể xảy ra nếu initState chạy trước khi context sẵn sàng
+
     if (_codeController == null && widget.starterCode.isNotEmpty) {
       _initializeController();
     }
@@ -75,7 +74,7 @@ class _CodeEditorState extends State<CodeEditor> {
     }
 
     final theme = Theme.of(context);
-    // SỬA: Xác định theme cho code editor ngay trong hàm build
+ 
     final codeTheme = theme.brightness == Brightness.dark
         ? atomOneDarkTheme
         : atomOneLightTheme;
@@ -85,7 +84,7 @@ class _CodeEditorState extends State<CodeEditor> {
         _buildLanguageSelector(theme),
         Expanded(
           child: CodeTheme(
-            // SỬA: Truyền theme đã xác định vào CodeTheme
+    
             data: CodeThemeData(styles: codeTheme),
             child: SingleChildScrollView(
               child: CodeField(

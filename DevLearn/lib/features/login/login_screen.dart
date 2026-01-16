@@ -48,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final theme = Theme.of(context);
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = theme.primaryColor;
-    final vibrantColor = Colors.cyan.shade300; // Màu nổi bật cho dark mode
+    final vibrantColor = Colors.cyan.shade300;
 
     return Scaffold(
       body: SafeArea(

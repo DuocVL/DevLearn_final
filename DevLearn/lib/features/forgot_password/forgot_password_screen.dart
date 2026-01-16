@@ -18,7 +18,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Future<void> _sendResetCode() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
-      // SỬA LỖI: Gọi đúng tên phương thức là 'sendResetCode'
+
       final success = await _authRepo.sendResetCode(_emailController.text);
       setState(() => _isLoading = false);
       if (success) {

@@ -13,7 +13,7 @@ class AuthService {
   static String _envOrDefault() {
     final env = dotenv.env['BACKEND_URL'];
     if (env != null && env.isNotEmpty) return '${env.replaceAll(RegExp(r'/$'), '')}/auth';
-    // Default to Android emulator host if BACKEND_URL not provided.
+
     return 'http://10.0.2.2:4000/auth';
   }
   final _storage = const FlutterSecureStorage();
@@ -41,7 +41,7 @@ class AuthService {
     return response;
   }
 
-  /// If [refreshToken] provided, it's sent in body to revoke that specific refresh token.
+  
   Future<http.Response> logout([String? refreshToken]) async {
     final url = Uri.parse('$baseurl/logout');
     if (refreshToken != null && refreshToken.isNotEmpty) {
@@ -80,7 +80,7 @@ class AuthService {
     return response;
   }
 
-  // OAuth endpoints: expect backend to exchange tokens/codes and return access tokens
+  
   Future<http.Response> loginWithGoogle(String idToken) async {
     final url = Uri.parse('$baseurl/oauth/google');
     final response = await http.post(

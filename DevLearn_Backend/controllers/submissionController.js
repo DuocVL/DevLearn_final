@@ -45,7 +45,7 @@ const getSubmission = async (req, res) => {
   }
 };
 
-// NEW: Get a list of submissions
+
 const getSubmissions = async (req, res) => {
   try {
     const { problemId } = req.query;
@@ -55,14 +55,13 @@ const getSubmissions = async (req, res) => {
       filter.problemId = problemId;
     }
 
-    // Regular users can only see their own submissions.
-    // Admins can see all submissions for the given filter.
+
     if (req.user.roles !== 'admin') {
       filter.userId = req.user._id;
     }
 
     const submissions = await Submissions.find(filter)
-      .sort({ createdAt: -1 }) // Sort by most recent first
+      .sort({ createdAt: -1 })
       .lean();
 
     return res.json({ submissions });

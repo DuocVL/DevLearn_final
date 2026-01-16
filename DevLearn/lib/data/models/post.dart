@@ -32,7 +32,6 @@ class Post {
   });
 
   factory Post.fromJson(Map<String, dynamic> json) {
-    // Helper functions from the original model
     int toIntSafe(dynamic v) {
       if (v == null) return 0;
       if (v is int) return v;
@@ -49,10 +48,6 @@ class Post {
         return DateTime.now();
       }
     }
-
-    // --- START OF FIX ---
-
-    // Correctly parse author information from the nested 'author' object
     String? authorId;
     String? authorName;
     final bool isAnonymous = json['anonymous'] as bool? ?? false;
@@ -64,13 +59,11 @@ class Post {
       final lastName = authorJson['lastName']?.toString() ?? '';
       authorName = '$firstName $lastName'.trim();
       if (authorName.isEmpty) {
-        authorName = 'Anonymous User'; // Fallback if name fields are empty
+        authorName = 'Anonymous User';
       }
     } else {
       authorName = 'Anonymous';
     }
-
-    // --- END OF FIX ---
 
     return Post(
       id: (json['id'] ?? json['_id'] ?? '').toString(),

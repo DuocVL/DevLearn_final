@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart'; // Thêm dependency này vào pubspec.yaml
+import 'package:flutter_svg/flutter_svg.dart';
 
 class WelcomeCard extends StatelessWidget {
   const WelcomeCard({super.key});
@@ -45,8 +45,7 @@ class WelcomeCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 16),
-          // Sử dụng một hình ảnh SVG để minh họa
-          // Bạn cần thêm file asset và cập nhật pubspec.yaml
+
           SvgPicture.asset(
             'assets/images/programming_illustration.svg', // Đảm bảo bạn có file này
             height: 70,

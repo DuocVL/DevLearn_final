@@ -34,7 +34,6 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
     }
   }
 
-  // SỬA: Toàn bộ hàm fetch được làm lại để đơn giản và đúng đắn hơn
   Future<void> _fetchTutorials({bool isRefresh = false}) async {
     if (_isLoading) return;
 
@@ -52,15 +51,15 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
         _hasMore = true;
       }
 
-      // 1. Lấy danh sách các tutorial đã được parse từ repository
+
       final List<TutorialSummary> newTutorials = await _repository.getTutorials(page: _currentPage);
 
       setState(() {
-        // 2. Nếu danh sách trả về rỗng, tức là đã hết dữ liệu
+ 
         if (newTutorials.isEmpty) {
           _hasMore = false;
         } else {
-        // 3. Thêm các tutorial mới vào danh sách hiện tại và tăng số trang
+
           _tutorials.addAll(newTutorials);
           _currentPage++;
         }

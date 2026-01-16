@@ -25,12 +25,12 @@ class TutorialSummary {
 
   factory TutorialSummary.fromJson(Map<String, dynamic> json) {
     return TutorialSummary(
-      // API trả về 'id' cho danh sách tutorials
+     
       id: json['id'],
       title: json['title'] ?? '',
       description: json['description'] ?? '',
       tags: List<String>.from(json['tags'] ?? []),
-      // SỬA: Xử lý author object mới
+    
       author: json['author'] != null ? Author.fromJson(json['author']) : null,
       totalViews: json['totalViews'] ?? 0,
       lessonCount: json['lessonCount'] ?? 0,

@@ -15,7 +15,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   final _tagsController = TextEditingController();
 
   bool _isAnonymous = false;
-  String _status = 'published'; // Giá trị mặc định
+  String _status = 'published';
   bool _isLoading = false;
 
   final _postRepository = PostRepository();
@@ -33,7 +33,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       setState(() => _isLoading = true);
 
       try {
-        // Chuyển đổi chuỗi tags thành danh sách
+   
         final tags = _tagsController.text.split(',').map((t) => t.trim()).where((t) => t.isNotEmpty).toList();
 
         await _postRepository.createPost(
@@ -44,7 +44,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           status: _status,
         );
 
-        // Hiển thị thông báo thành công và quay lại màn hình trước
+       
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Đăng bài viết thành công!'), backgroundColor: Colors.green),
         );

@@ -58,7 +58,7 @@ class _PostPageState extends State<PostPage> {
 
             final posts = snapshot.data!;
             return ListView.separated(
-              padding: const EdgeInsets.only(bottom: 80, top: 8), // Padding for FAB and top spacing
+              padding: const EdgeInsets.only(bottom: 80, top: 8), 
               itemCount: posts.length,
               separatorBuilder: (context, index) => Divider(height: 1, thickness: 1, color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade800 : Colors.grey.shade200),
               itemBuilder: (context, index) {

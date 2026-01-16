@@ -23,12 +23,12 @@ const handleGoogleOAuth = async (req, res, next) => {
                 provider: 'google', 
                 email, 
                 username, 
-                // For OAuth users, we can consider their email verified
+             
                 isEmailVerified: true 
             });
         }
 
-        // Attach user to request and pass to the login handler
+        
         req.user = user;
         return handleLogin(req, res);
 

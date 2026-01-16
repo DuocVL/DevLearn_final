@@ -3,10 +3,9 @@ import 'package:devlearn/data/api_client.dart';
 import 'package:devlearn/main.dart';
 
 class PostService {
-  // SỬA: Lấy ApiClient từ service locator thay vì constructor
   final ApiClient _apiClient = apiClient;
 
-  /// Fetches a paginated list of posts from the API.
+
   Future<List<Post>> getPosts({int page = 1, int limit = 20}) async {
     try {
       final response = await _apiClient.get(
@@ -16,7 +15,7 @@ class PostService {
           'limit': limit,
         },
       );
-      // API trả về object có key 'data' là một list
+   
       final List<dynamic> postData = response.data['data'];
       return postData.map((json) => Post.fromJson(json)).toList();
     } catch (e) {

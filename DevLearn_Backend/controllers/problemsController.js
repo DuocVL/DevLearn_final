@@ -104,7 +104,7 @@ const handlerGetListProblems = async (req, res) => {
             .skip(skip)
             .limit(limitNum);
 
-        // *** BẮT ĐẦU THAY ĐỔI ***
+
         const user = req.user || null;
         const userSaved = (user && Array.isArray(user.savedProblems)) ? user.savedProblems.map(String) : [];
         const userSolved = (user && Array.isArray(user.solvedProblems)) ? user.solvedProblems.map(String) : []; // Lấy danh sách ID bài đã giải
@@ -120,7 +120,6 @@ const handlerGetListProblems = async (req, res) => {
                 saved: user ? userSaved.includes(problemIdStr) : false,
             };
         });
-        // *** KẾT THÚC THAY ĐỔI ***
 
         return res.status(200).json({
             data: summaries,
