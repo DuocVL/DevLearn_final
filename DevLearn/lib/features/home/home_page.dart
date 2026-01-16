@@ -1,10 +1,7 @@
-import 'package:devlearn/features/home/widgets/welcome_card.dart';
-import 'package:flutter/material.dart';
 import 'package:devlearn/data/models/tutorial_summary.dart';
 import 'package:devlearn/data/repositories/tutorial_repository.dart';
-import 'package:devlearn/features/tutorial/tutorials_screen.dart';
-import 'package:devlearn/features/tutorial/tutorial_detail_screen.dart';
 import 'package:devlearn/features/tutorial/widgets/tutorial_card.dart';
+import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,127 +11,107 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final _repo = TutorialRepository();
   late Future<List<TutorialSummary>> _tutorialsFuture;
-  final _tutorialRepository = TutorialRepository();
 
   @override
   void initState() {
     super.initState();
-    _tutorialsFuture = _fetchHomepageTutorials();
+    _fetchTutorials();
   }
 
-  // SỬA: Hàm này giờ trả về Future<List<TutorialSummary>> trực tiếp
-  Future<List<TutorialSummary>> _fetchHomepageTutorials() async {
-    try {
-      // SỬA: Gọi repository và nhận về List<TutorialSummary>
-      // Không cần xử lý JSON ở đây nữa
-      final tutorials = await _tutorialRepository.getTutorials(limit: 4);
-      return tutorials;
-    } catch (e) {
-      print('Error fetching homepage tutorials: $e');
-      // Trả về danh sách rỗng nếu có lỗi
-      return [];
-    }
+  void _fetchTutorials() {
+    _tutorialsFuture = _repo.getTutorials();
+  }
+
+  Future<void> _refresh() async {
+    setState(() {
+      _fetchTutorials();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () async {
-        setState(() {
-          _tutorialsFuture = _fetchHomepageTutorials();
-        });
-      },
-      child: ListView(
-        padding: const EdgeInsets.only(top: 8, bottom: 16),
-        children: [
-          const WelcomeCard(),
-          const SizedBox(height: 16),
-          _buildNewTutorialsSection(context),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Trang chủ', style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: false,
+        actions: [
+          IconButton(
+            onPressed: () { /* TODO: Notification screen */ },
+            icon: const Icon(Icons.notifications_none_rounded),
+          ),
         ],
+      ),
+      body: RefreshIndicator(
+        onRefresh: _refresh,
+        child: FutureBuilder<List<TutorialSummary>>(
+          future: _tutorialsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (snapshot.hasError) {
+              return _buildErrorState();
+            }
+
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return _buildEmptyState();
+            }
+
+            final tutorials = snapshot.data!;
+            return ListView.separated(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+              itemCount: tutorials.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 16),
+              itemBuilder: (context, index) {
+                return TutorialCard(tutorial: tutorials[index]);
+              },
+            );
+          },
+        ),
       ),
     );
   }
 
-  Widget _buildNewTutorialsSection(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget _buildErrorState() {
+     return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                'Bài hướng dẫn mới',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const TutorialsScreen()),
-                  );
-                },
-                child: const Text('Xem tất cả'),
+              Icon(Icons.cloud_off_outlined, size: 64, color: Colors.grey.shade400),
+              const SizedBox(height: 16),
+              const Text('Không thể tải hướng dẫn', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 8),
+              Text('Đã có lỗi xảy ra. Vui lòng kiểm tra kết nối và thử lại.',
+                  style: TextStyle(color: Colors.grey.shade600),
+                  textAlign: TextAlign.center),
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: _refresh,
+                icon: const Icon(Icons.refresh),
+                label: const Text('Thử lại'),
               ),
             ],
           ),
         ),
-        const SizedBox(height: 8),
-        FutureBuilder<List<TutorialSummary>>(
-          future: _tutorialsFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return _buildLoadingPlaceholder(context);
-            }
-            if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
-              return const SizedBox(
-                height: 100,
-                child: Center(
-                  child: Text('Không tải được bài hướng dẫn mới.'),
-                ),
-              );
-            }
-
-            final tutorials = snapshot.data!;
-            return SizedBox(
-              height: 310,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: tutorials.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    margin: EdgeInsets.only(left: 16, right: index == tutorials.length - 1 ? 16 : 0),
-                    child: TutorialCard(tutorial: tutorials[index]),
-                  );
-                },
-              ),
-            );
-          },
-        ),
-      ],
-    );
+      );
   }
 
-  Widget _buildLoadingPlaceholder(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    return SizedBox(
-      height: 310,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: 2,
-        itemBuilder: (context, index) {
-          return Container(
-             width: screenWidth * 0.8,
-             margin: const EdgeInsets.only(left: 16), 
-             child: Card(
-              elevation: 2.0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-              child: const Center(child: CircularProgressIndicator()),
-            ),
-          );
-        },
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.school_outlined, size: 64, color: Colors.grey),
+          const SizedBox(height: 16),
+          const Text('Chưa có hướng dẫn nào', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+          const SizedBox(height: 8),
+          Text('Nội dung mới sẽ sớm được cập nhật.', style: TextStyle(color: Colors.grey.shade600)),
+        ],
       ),
     );
   }

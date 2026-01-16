@@ -5,6 +5,7 @@ class ProblemSummary {
   final double acceptance;
   final bool solved;
   final bool saved;
+  final List<String> tags;
 
   ProblemSummary({
     required this.id,
@@ -13,6 +14,7 @@ class ProblemSummary {
     required this.acceptance,
     required this.solved,
     required this.saved,
+    required this.tags,
   });
 
   factory ProblemSummary.fromJson(Map<String, dynamic> json){
@@ -25,6 +27,13 @@ class ProblemSummary {
       return 0.0;
     }
 
+    final List<String> tagsList;
+    if (json['tags'] is List) {
+      tagsList = List<String>.from(json['tags'].map((tag) => tag.toString()));
+    } else {
+      tagsList = [];
+    }
+
     return ProblemSummary(
       id: id,
       title: (json['title'] ?? '').toString(),
@@ -32,6 +41,7 @@ class ProblemSummary {
       acceptance: toDouble(json['acceptance']),
       solved: json['solved'] == true,
       saved: json['saved'] == true,
+      tags: tagsList,
     );
   }
 }

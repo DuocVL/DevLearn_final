@@ -13,10 +13,15 @@ class ProblemPage extends StatefulWidget {
 class _ProblemPageState extends State<ProblemPage> {
   final _repo = ProblemRepository();
   final _scrollController = ScrollController();
-  final _searchController = TextEditingController();
 
   final List<ProblemSummary> _problems = [];
-  final List<String> _filters = ["All", "Easy", "Medium", "Hard"];
+  // Sửa đổi bộ lọc để phù hợp với giá trị từ API
+  final List<Map<String, String>> _filters = [
+    {"label": "Tất cả", "value": "All"},
+    {"label": "Dễ", "value": "Easy"},
+    {"label": "Trung bình", "value": "Medium"},
+    {"label": "Khó", "value": "Hard"},
+  ];
   
   String _selectedFilter = "All";
   bool _isInitialLoading = true;
@@ -36,7 +41,6 @@ class _ProblemPageState extends State<ProblemPage> {
   void dispose() {
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
-    _searchController.dispose();
     super.dispose();
   }
 
@@ -72,9 +76,6 @@ class _ProblemPageState extends State<ProblemPage> {
         setState(() {
           _error = e.toString();
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Lỗi: ${e.toString()}'), backgroundColor: Colors.red),
-        );
       }
     } finally {
       if (mounted) {
@@ -87,7 +88,7 @@ class _ProblemPageState extends State<ProblemPage> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200 && _hasMore) {
+    if (!_isMoreLoading && _hasMore && _scrollController.position.pixels >= _scrollController.position.maxScrollExtent * 0.9) {
       _fetchProblems();
     }
   }
@@ -104,14 +105,24 @@ class _ProblemPageState extends State<ProblemPage> {
     await _fetchProblems(isRefreshing: true);
   }
 
+  Future<void> _refresh() => _onFilterChanged(_selectedFilter);
+
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Bài tập', style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: false,
+        elevation: 0,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      ),
+      body: Column(
         children: [
           _buildFilterBar(),
           Expanded(child: _buildBody()),
         ],
-      );
+      ),
+    );
   }
 
   Widget _buildBody() {
@@ -122,17 +133,23 @@ class _ProblemPageState extends State<ProblemPage> {
     if (_error != null && _problems.isEmpty) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.cloud_off, size: 48, color: Colors.grey),
+              Icon(Icons.cloud_off_outlined, size: 64, color: Colors.grey.shade400),
               const SizedBox(height: 16),
-              const Text('Không thể tải dữ liệu', style: TextStyle(fontSize: 18)),
+              const Text('Không thể tải dữ liệu', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
               const SizedBox(height: 8),
-              Text(_error!, style: const TextStyle(color: Colors.grey), textAlign: TextAlign.center),
-              const SizedBox(height: 16),
-              ElevatedButton(onPressed: () => _onFilterChanged(_selectedFilter), child: const Text('Thử lại')),
+              Text('Đã có lỗi xảy ra. Vui lòng kiểm tra kết nối và thử lại.', 
+                  style: TextStyle(color: Colors.grey.shade600), 
+                  textAlign: TextAlign.center),
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: _refresh,
+                icon: const Icon(Icons.refresh),
+                label: const Text('Thử lại'),
+              ),
             ],
           ),
         ),
@@ -140,18 +157,19 @@ class _ProblemPageState extends State<ProblemPage> {
     }
     
     if (_problems.isEmpty) {
-       return const Center(child: Text('Không tìm thấy bài tập nào.'));
+       return const Center(child: Text('Không tìm thấy bài tập nào phù hợp.'));
     }
 
     return RefreshIndicator(
-      onRefresh: () => _onFilterChanged(_selectedFilter),
-      child: ListView.builder(
+      onRefresh: _refresh,
+      child: ListView.separated(
         controller: _scrollController,
         itemCount: _problems.length + (_isMoreLoading ? 1 : 0),
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.all(16),
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
         itemBuilder: (context, index) {
           if (index == _problems.length) {
-            return const Center(child: Padding(padding: EdgeInsets.all(16.0), child: CircularProgressIndicator()));
+            return const Center(child: Padding(padding: EdgeInsets.symmetric(vertical: 24.0), child: CircularProgressIndicator()));
           }
           return ProblemItem(problemSummary: _problems[index]);
         },
@@ -161,32 +179,43 @@ class _ProblemPageState extends State<ProblemPage> {
 
   Widget _buildFilterBar() {
     final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      padding: const EdgeInsets.only(top: 0, bottom: 12, left: 16, right: 16),
       decoration: BoxDecoration(
-        color: theme.appBarTheme.backgroundColor,
-        border: Border(bottom: BorderSide(color: theme.dividerColor))
+        color: theme.scaffoldBackgroundColor,
+        border: Border(bottom: BorderSide(color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200, width: 1)),
       ),
       child: SizedBox(
-        height: 32,
+        height: 36,
         child: ListView.separated(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
           scrollDirection: Axis.horizontal,
           itemCount: _filters.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 8),
+          separatorBuilder: (_, __) => const SizedBox(width: 10),
           itemBuilder: (context, index) {
             final filter = _filters[index];
-            final isSelected = _selectedFilter == filter;
+            final isSelected = _selectedFilter == filter['value'];
             return ChoiceChip(
-              label: Text(filter),
+              label: Text(filter['label']!),
               selected: isSelected,
-              onSelected: (_) => _onFilterChanged(filter),
-              selectedColor: theme.colorScheme.primary,
+              onSelected: (_) => _onFilterChanged(filter['value']!),
+              labelPadding: const EdgeInsets.symmetric(horizontal: 12),
               labelStyle: TextStyle(
-                color: isSelected ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface,
+                color: isSelected 
+                  ? theme.colorScheme.primary 
+                  : isDarkMode ? Colors.grey.shade300 : Colors.grey.shade700,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
-              backgroundColor: theme.colorScheme.surface,
-              side: isSelected ? BorderSide.none : BorderSide(color: theme.dividerColor),
+              backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade100,
+              selectedColor: theme.primaryColor.withOpacity(0.15),
+              shape: StadiumBorder(
+                side: BorderSide(
+                  color: isSelected ? theme.primaryColor.withOpacity(0.5) : Colors.transparent,
+                  width: 1,
+                ),
+              ),
+              elevation: 0,
+              pressElevation: 0,
             );
           },
         ),
